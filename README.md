@@ -1,11 +1,7 @@
 <<<<<<< HEAD
-# Getting Started with Create React App
+# Cleopatra Front-End
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
-
-## Available Scripts
-
-In the project directory, you can run:
+This project is written in ReactJS
 
 ### `npm start`
 
