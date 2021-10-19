@@ -32,7 +32,7 @@ Format: [data]: czas poświęcony - co zrobił
 
 
 ## Do zrealizowania:
-Format:
+Format: <br />
 -[x] zrealizowana rzecz <br />
 -[] do zrealizowania
 
