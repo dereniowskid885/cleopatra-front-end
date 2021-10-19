@@ -10,10 +10,15 @@
  - Szymon Cwynar:
 
 ## Stos technologiczny:
- - do wypełnienia
+ - front-end: ReactJS
 
 ## Postęp realizacji:
 Format: [data]: czas poświęcony - co zrobił
+### Team:
+
+[6.10.2021]: 3h - rozeznanie w technologiach back-endowych i front-endowych
+[13.10.2021]: 3h - rozeznanie w technologiach back-endowych i front-endowych
+
 ### Daniel Dereniowski:
 
 
@@ -21,7 +26,7 @@ Format: [data]: czas poświęcony - co zrobił
 
 
 ### Jakub Maćkowiak:
-[13.10.2021]: 6h - nauka PHP i technologii pokrewnych
+
 
 ### Szymon Cwynar:
 
@@ -31,7 +36,13 @@ Format:
 -[x] zrealizowana rzecz
 -[] do zrealizowania
 
--[x] 2h oględziny projektu i podział obowiązków
+-[x] rozeznanie technologii 
+-[x] oględziny projektu i podział obowiązków
+-[x] utworzenie repozytorium
+-[x] wybór technologii front-endowej
+-[x] wybór serwera hostingowego aplikacji
+-[] wybór technologii back-endowej
+-[] wybór technologii bazy danych
 
 # Cleopatra Front-End
 
