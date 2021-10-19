@@ -16,8 +16,8 @@
 Format: [data]: czas poświęcony - co zrobił
 ### Team:
 
-[6.10.2021]: 3h - rozeznanie w technologiach back-endowych i front-endowych <br />
-[13.10.2021]: 3h - rozeznanie w technologiach back-endowych i front-endowych
+[5.10.2021]: 3h - rozeznanie w technologiach back-endowych i front-endowych <br />
+[12.10.2021]: 3h - rozeznanie w technologiach back-endowych i front-endowych
 
 ### Daniel Dereniowski:
 
