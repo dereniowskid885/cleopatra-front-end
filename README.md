@@ -16,7 +16,7 @@
 Format: [data]: czas poświęcony - co zrobił
 ### Team:
 
-[6.10.2021]: 3h - rozeznanie w technologiach back-endowych i front-endowych
+[6.10.2021]: 3h - rozeznanie w technologiach back-endowych i front-endowych <br />
 [13.10.2021]: 3h - rozeznanie w technologiach back-endowych i front-endowych
 
 ### Daniel Dereniowski:
@@ -33,16 +33,16 @@ Format: [data]: czas poświęcony - co zrobił
 
 ## Do zrealizowania:
 Format:
--[x] zrealizowana rzecz
+-[x] zrealizowana rzecz <br />
 -[] do zrealizowania
 
--[x] rozeznanie technologii 
--[x] oględziny projektu i podział obowiązków
--[x] utworzenie repozytorium
--[x] wybór technologii front-endowej
--[x] wybór serwera hostingowego aplikacji
--[] wybór technologii back-endowej
--[] wybór technologii bazy danych
+-[x] rozeznanie technologii <br />
+-[x] oględziny projektu i podział obowiązków <br />
+-[x] utworzenie repozytorium <br />
+-[x] wybór technologii front-endowej <br />
+-[x] wybór serwera hostingowego aplikacji <br />
+-[] wybór technologii back-endowej <br />
+-[] wybór technologii bazy danych 
 
 # Cleopatra Front-End
 
