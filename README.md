@@ -21,15 +21,17 @@ Format: [data]: czas poświęcony - co zrobił
 
 
 ### Jakub Maćkowiak:
-
+[13.10.2021]: 6h - nauka PHP i technologii pokrewnych
 
 ### Szymon Cwynar:
 
 
 ## Do zrealizowania:
-
+Format:
 -[x] zrealizowana rzecz
 -[] do zrealizowania
+
+-[x] 2h oględziny projektu i podział obowiązków
 
 # Cleopatra Front-End
 
