@@ -1,0 +1,25 @@
+@import './variables';
+
+.login {
+    margin: calc(0.5em + 0.7vw);
+    font-size: calc(0.5rem + 0.5vw);
+
+    &__form {
+        input {
+            margin: 0.8em 0;
+            font-size: 1rem;
+            padding: 10px;
+            width: 50%;
+            box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.7);
+            border: none;
+            outline: none;
+            border-radius: 10px;
+        }
+    }
+
+    &__button {
+        @extend %btn-primary;
+        font-size: 1.3rem;
+        margin: calc(0.3em + 0.3vw) auto;
+    }
+}

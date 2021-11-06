@@ -1,0 +1,21 @@
+@import url('https://fonts.googleapis.com/css2?family=Signika:wght@600&display=swap');
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  font-family: 'Signika', sans-serif;
+}
+
+body {
+  background-image: url('../assets//background-image.jpg');
+  background-attachment: fixed;
+  background-size: cover;
+  background-repeat: no-repeat;
+  font-size: 100%;
+
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
+}

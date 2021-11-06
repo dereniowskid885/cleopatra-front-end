@@ -1,0 +1,27 @@
+@import './variables';
+
+.reservations {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+
+    &__calendar {
+        width: 60vw !important;
+        border-radius: 10px;
+    }
+
+    &__items {
+        padding: 3em;
+    }
+
+    &__button {
+        @extend %btn-primary;
+        position: fixed;
+        bottom: 0;
+        right: -32%;
+    }
+}
