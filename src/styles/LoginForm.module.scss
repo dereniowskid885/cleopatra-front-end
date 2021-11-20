@@ -17,9 +17,23 @@
         }
     }
 
+    h1 {
+        margin-bottom: 0.8em;
+    }
+
     &__button {
         @extend %btn-primary;
         font-size: 1.3rem;
         margin: calc(0.3em + 0.3vw) auto;
+    }
+
+    &__buttons {
+        width: 40%;
+        margin: 0.8em auto 0 auto;
+        display: flex;
+    }
+
+    &__register {
+        margin-top: 3em;
     }
 }

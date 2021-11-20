@@ -1,12 +1,14 @@
-import classes from '../styles/Home.module.scss'
-import LoginForm from '../components/loginForm/LoginForm'
-import Logo from '../components/layout/Logo'
+import classes from '../styles/Home.module.scss';
+import LoginForm from '../components/loginForm/LoginForm';
+import Logo from '../components/layout/Logo';
 
-function Home() {
+function Home(props) {
     return (
         <main className={classes.home}>
             <Logo />
-            <LoginForm />
+            <LoginForm 
+                showRegister={props.showRegister}
+            />
         </main>
     );
 }

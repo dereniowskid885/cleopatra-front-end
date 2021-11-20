@@ -1,11 +1,35 @@
 import classes from './styles/App.module.scss';
 import Home from './pages/Home';
 import Reservations from './pages/Reservations';
+import Background from './components/windowBackground/Background';
+import RegisterForm from './components/loginForm/RegisterForm';
 import { Route, Routes } from 'react-router-dom';
-import React, { Component } from 'react';
+import { Component, React } from 'react';
 
 class App extends Component {
-state = {
+  constructor(props) {
+    super(props);
+    this.state = {
+      backgroundShow: false,
+      registerShow: false
+    };
+
+    this.showRegister = () => {
+      this.setState({ 
+        backgroundShow: true,
+        registerShow: true 
+      });
+    };
+
+    this.closeRegister = () => {
+      this.setState({ 
+        backgroundShow: false,
+        registerShow: false 
+      });
+    };
+  }
+
+  state = {
     data: null
   };
 
@@ -13,15 +37,16 @@ state = {
     this.callBackendAPI()
       .then(res => this.setState({ data: res.express }))
       .catch(err => console.log(err));
-  }
+  };
     // fetching the GET route from the Express server which matches the GET route from server.js
   callBackendAPI = async () => {
     const response = await fetch('/express_backend');
     const body = await response.json();
 
     if (response.status !== 200) {
-      throw Error(body.message) 
+      throw Error(body.message);
     }
+
     return body;
   };
 
@@ -30,19 +55,27 @@ state = {
       <main className={classes.container}>
         <Routes>
           <Route path="/" element={ 
-              <Home /> }
-          />
+            <Home 
+              showRegister={this.showRegister}
+            /> 
+          }/>
           <Route path="/reservations" element={
-              <Reservations /> 
-            } 
-          />
+            <Reservations /> 
+          }/>
           <Route path="/backend" element={
-              <p className="App-intro">{this.state.data}</p>         
-            } 
-          />
+            <p className="App-intro">{this.state.data}</p>         
+          }/>
         </Routes>
+        { this.state.registerShow && 
+          <RegisterForm 
+            onCloseBtnClick={this.closeRegister}
+          />
+        }
+        { this.state.backgroundShow &&
+          <Background />
+        }
       </main>
-  );
+    );
   }
 }
 

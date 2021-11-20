@@ -1,0 +1,16 @@
+.window {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 40vw;
+    height: fit-content;
+    z-index: 2;
+    text-align: center;
+    background-color: #786e60;
+    padding: 1em;
+    border-radius: 30px;
+    box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.7);
+}
