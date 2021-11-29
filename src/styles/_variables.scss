@@ -4,8 +4,10 @@
     display: block;
     border-radius: 10px;
     border: none;
+    transition: 0.5s;
 
     &:hover {
-        background-color: #e6e6e6;
+        background-color: black;
+        color: white;
     }
 }
