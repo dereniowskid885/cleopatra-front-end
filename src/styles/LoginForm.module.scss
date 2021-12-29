@@ -5,6 +5,8 @@
     font-size: calc(0.5rem + 0.5vw);
 
     &__form {
+        margin-bottom: 0.5em;
+
         input {
             margin: 0.8em 0;
             font-size: 1rem;
@@ -18,7 +20,7 @@
     }
 
     h1 {
-        margin-bottom: 0.8em;
+        margin-bottom: 1em;
     }
 
     &__button {
@@ -29,11 +31,32 @@
 
     &__buttons {
         width: 40%;
-        margin: 0.8em auto 0 auto;
+        margin: 0 auto;
         display: flex;
     }
 
     &__register {
-        margin-top: 3em;
+        margin-top: 2em;
+    }
+
+    &__alert {
+        margin-top: 1.5em;
+        color: #8d2929;
+        opacity: 0;
+        transition: opacity 0.3s ease-in;
+        -moz-user-select: none; 
+        -khtml-user-select: none; 
+        -webkit-user-select: none; 
+        -o-user-select: none;
+        user-select: none;
+
+        &Show {
+            opacity: 1;
+        }
+
+        &Register {
+            color: #481313;
+            margin: 1em 0 0.2em 0;
+        }
     }
 }

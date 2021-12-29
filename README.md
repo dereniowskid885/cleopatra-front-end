@@ -10,6 +10,7 @@
 
 ## Stos technologiczny:
  - front-end: ReactJS
+ - back-end: Node.js https://github.com/jaqlig/cleopatra-node
 
 # Cleopatra Front-End
 

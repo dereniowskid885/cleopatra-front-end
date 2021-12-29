@@ -1,6 +1,6 @@
 @import './variables';
 
-.reservations {
+.services {
     @extend %page-container;
 
     &__title {
@@ -10,24 +10,24 @@
         font-weight: 600;
         box-shadow: 5px 15px 30px #0e0e0e91;
         width: fit-content;
-        margin-top: 0.3em;
+        margin: 0.3em 0 0.3em 0;
         padding: 0.2em 0.4em;
         border: 4px #483b23 solid;
         background-color: #c0a291e0;
     }
 
-    &__calendar {
-        width: 60vw !important;
-        border-radius: 10px;
-        margin: 0 auto;
-    }
+    &__subpage {
+        font-size: 1.8rem;
+        opacity: 0.6;
+        font-style: italic;
+        cursor: pointer;
+        transition: 0.5s all;
 
-    &__table {
-        
-    }
-
-    &__wrapper {
-        padding: 1em;
+        &:hover {
+            letter-spacing: 2px;
+            text-shadow: 3px 3px 20px black;
+            opacity: 1;
+        }
     }
 
     &__content {

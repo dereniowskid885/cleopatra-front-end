@@ -1,0 +1,23 @@
+@import '_variables';
+
+.userInfo {
+    position: absolute;
+    margin: calc(0.5em + 0.1vw);
+    font-size: 0.9rem;
+    background-color: #c0a291c2;
+    border-radius: 1000px;
+    padding: 2em;
+    text-align: center;
+    box-shadow: 5px 10px 20px #0e0e0e91;
+    border: 4px #483b23 solid;
+
+    &__message {
+        padding: 2px;
+    }
+
+    &__button {
+        @extend %btn-primary;
+        margin: 5px auto 0;
+        font-size: 0.85rem;
+    }
+}
