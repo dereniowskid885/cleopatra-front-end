@@ -1,4 +1,4 @@
-import classes from '../../styles/LoginForm.module.scss';
+import classes from '../../styles/ActionForm.module.scss';
 import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 
@@ -6,12 +6,13 @@ function LoginForm(props) {
     const [ users, setUsers ] = useState([]);
     const navigate = useNavigate();
 
+    const usernameRef = useRef();
+    const passwordRef = useRef();
+
     useEffect(() => {
-        fetch(
-            'https://cleopatra-db-default-rtdb.europe-west1.firebasedatabase.app/users.json'
-        ).then(response => {
-            return response.json();
-        }).then(data => {
+        fetch('https://cleopatra-db-default-rtdb.europe-west1.firebasedatabase.app/users.json')
+        .then(response => { return response.json(); })
+        .then(data => {
             const tempData = [];
 
             for (const key in data) {
@@ -26,9 +27,6 @@ function LoginForm(props) {
             setUsers(tempData);
         });
     }, []);
-
-    const usernameRef = useRef();
-    const passwordRef = useRef();
 
     function loginUser(e) {
         e.preventDefault();

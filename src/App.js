@@ -2,6 +2,7 @@ import classes from './styles/App.module.scss';
 import Home from './pages/Home';
 import Reservations from './pages/Reservations';
 import Services from './pages/Services';
+import AdministrationPanel from './pages/AdministrationPanel';
 import Background from './components/windowBackground/Background';
 import RegisterForm from './components/loginForm/RegisterForm';
 import { Route, Routes } from 'react-router-dom';
@@ -78,6 +79,12 @@ class App extends Component {
             <Route path="/services" element={
               <Services
                 userLoggedIn={this.state.username}
+              /> 
+            }/>
+            <Route path="/panel" element={
+              <AdministrationPanel
+                userLoggedIn={this.state.username}
+                setUsername={this.loginUser}
               /> 
             }/>
             <Route path="/backend" element={

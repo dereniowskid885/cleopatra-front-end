@@ -1,5 +1,4 @@
-import classes from '../../styles/LoginForm.module.scss';
-import windowClass from '../../styles/Window.module.scss';
+import classes from '../../styles/ActionForm.module.scss';
 import Fade from 'react-reveal/Fade';
 import { useRef, useState, useEffect } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
@@ -10,14 +9,21 @@ function RegisterForm(props) {
     const [ emailAlert, setEmailAlertState ] = useState(false);
     const [ passwordAlert, setPasswordAlertState ] = useState(false);
     const [ registerAlert, setRegisterAlertState ] = useState(false);
+
+    const [ userData, setUserData ] = useState({});
     const [ users, setUsers ] = useState([]);
 
+    const usernameRef = useRef();
+    const passwordRef = useRef();
+    const passwordConfirmRef = useRef();
+    const nameRef = useRef();
+    const surnameRef = useRef();
+    const emailRef = useRef();
+
     useEffect(() => {
-        fetch(
-            'https://cleopatra-db-default-rtdb.europe-west1.firebasedatabase.app/users.json'
-        ).then(response => {
-            return response.json();
-        }).then(data => {
+        fetch('https://cleopatra-db-default-rtdb.europe-west1.firebasedatabase.app/users.json')
+        .then(response => { return response.json(); })
+        .then(data => {
             const tempData = [];
 
             for (const key in data) {
@@ -33,20 +39,21 @@ function RegisterForm(props) {
         });
     }, []);
 
-    const usernameRef = useRef();
-    const passwordRef = useRef();
-    const passwordConfirmRef = useRef();
-    const nameRef = useRef();
-    const surnameRef = useRef();
-    const emailRef = useRef();
+    useEffect(() => {
+        if (props.editAccountIsOpen) {
+            fetch('https://cleopatra-db-default-rtdb.europe-west1.firebasedatabase.app/users/' + props.accountId + '.json')
+            .then(response => { return response.json(); })
+            .then(data => { setUserData(data) });
+        }
+    }, [props.editAccountIsOpen, props.accountId]);
 
     function registerUser(e) {
         e.preventDefault();
+        let registerAllowed = true;
 
         setUsernameAlertState(false);
         setEmailAlertState(false);
         setPasswordAlertState(false);
-        let registerAllowed = true;
         
         if (users.length) {
             users.forEach(user => {
@@ -56,13 +63,21 @@ function RegisterForm(props) {
                 }
 
                 if (user.username === usernameRef.current.value) {
-                    setUsernameAlertState(true);
-                    registerAllowed = false;
+                    if (props.editAccountIsOpen) {
+                        registerAllowed = true;
+                    } else {
+                        setUsernameAlertState(true);
+                        registerAllowed = false;
+                    }
                 }
                 
                 if (user.email === emailRef.current.value) {
-                    setEmailAlertState(true);
-                    registerAllowed = false;
+                    if (props.editAccountIsOpen) {
+                        registerAllowed = true;
+                    } else {
+                        setEmailAlertState(true);
+                        registerAllowed = false;
+                    }
                 }
             });
         } else if (passwordRef.current.value !== passwordConfirmRef.current.value) {
@@ -78,51 +93,63 @@ function RegisterForm(props) {
                 surname: surnameRef.current.value,
                 email: emailRef.current.value
             }
-    
+
             fetch(
-                'https://cleopatra-db-default-rtdb.europe-west1.firebasedatabase.app/users.json',
+                // eslint-disable-next-line no-useless-concat
+                'https://cleopatra-db-default-rtdb.europe-west1.firebasedatabase.app/' + `${props.editAccountIsOpen ? 'users/' + props.accountId : 'users'}` + '.json',
                 {
-                    method: 'POST',
+                    method: `${props.editAccountIsOpen ? 'PUT' : 'POST'}`,
                     body: JSON.stringify(userData),
                     headers: { 'Content-type': 'application/json' }
                 }
             ).then(() => {
-                setRegisterAlertState(true);
-                window.location.reload();
+                if (props.administrationPanelIsOpen) {
+                    props.userIsAdded();
+                    props.onCloseBtnClick();
+                } else {
+                    setRegisterAlertState(true);
+                    window.location.reload();
+                }
             });
+        }
+
+        if (props.editAccountIsOpen && props.userLoggedIn === userData.username) {
+            props.setUsername(usernameRef.current.value);
         }
     }
 
     return (
         <Fade>
-            <div className={windowClass.window}>
+            <div className={classes.window}>
                 <IconContext.Provider value={
                     { 
                         size: "45px",
-                        className: windowClass.window__icon, 
+                        className: classes.window__icon, 
                         title: "window close button" 
                     }
                 }>
                     <IoMdCloseCircle onClick={props.onCloseBtnClick}/>
                 </IconContext.Provider>
-                <div className={classes.login}>
-                    <h1>Podaj swoje dane:</h1>
-                    <form className={classes.login__form} onSubmit={registerUser}>
+                <div className={classes.window__container}>
+                    <h1>Podaj 
+                    {!props.administrationPanelIsOpen ? ' swoje ' : ' '} 
+                    dane:</h1>
+                    <form className={classes.window__form} onSubmit={registerUser}>
                         <label htmlFor="username"><h2>Nazwa użytkownika</h2></label>
-                        <input type="text" name="username" id="username" ref={usernameRef} required/>
+                        <input type="text" name="username" id="username" ref={usernameRef} defaultValue={userData.username} required/>
                         <label htmlFor="password"><h2>Hasło</h2></label>
-                        <input type="password" name="password" id="password" ref={passwordRef} required/>
+                        <input type="password" name="password" id="password" ref={passwordRef} defaultValue={userData.password} required/>
                         <label htmlFor="password_confirm"><h2>Powtórz hasło</h2></label>
-                        <input type="password" name="password_confirm" id="password_confirm" ref={passwordConfirmRef} required/>
+                        <input type="password" name="password_confirm" id="password_confirm" ref={passwordConfirmRef} defaultValue={userData.password} required/>
                         <label htmlFor="name"><h2>Imię</h2></label>
-                        <input type="text" name="name" id="name" ref={nameRef} required/>
+                        <input type="text" name="name" id="name" ref={nameRef} defaultValue={userData.name} required/>
                         <label htmlFor="surname"><h2>Nazwisko</h2></label>
-                        <input type="text" name="surname" id="surname" ref={surnameRef} required/>
+                        <input type="text" name="surname" id="surname" ref={surnameRef} defaultValue={userData.surname} required/>
                         <label htmlFor="email"><h2>E-mail</h2></label>
-                        <input type="email" name="email" id="email" ref={emailRef} required/>
-                        <div className={classes.login__buttons}>
-                            <button className={classes.login__button} type="submit">Zatwierdź</button>
-                            <button className={classes.login__button} onClick={props.onCloseBtnClick}>Anuluj</button>
+                        <input type="email" name="email" id="email" ref={emailRef} defaultValue={userData.email} required/>
+                        <div className={classes.window__buttons}>
+                            <button className={classes.window__button} type="submit">Zatwierdź</button>
+                            <button className={classes.window__button} onClick={props.onCloseBtnClick}>Anuluj</button>
                         </div>
                     </form>
                     { usernameAlert &&

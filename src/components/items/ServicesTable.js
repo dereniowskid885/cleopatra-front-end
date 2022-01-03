@@ -13,7 +13,7 @@ import Typography from '@mui/material/Typography';
 import Paper from '@mui/material/Paper';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-import classes from '../../styles/ServicesTable.module.scss';
+import classes from '../../styles/Tables.module.scss';
 
 function createData(name, calories, fat, carbs, protein, price) {
   return {
@@ -40,7 +40,7 @@ function createData(name, calories, fat, carbs, protein, price) {
 
 function Row(props) {
   const { row } = props;
-  const [open, setOpen] = React.useState(false);
+  const [ open, setOpen ] = React.useState(false);
 
   return (
     <React.Fragment>
@@ -127,7 +127,7 @@ const rows = [
   createData('Gingerbread', 356, 3.8)
 ];
 
-export default function CollapsibleTable() {
+export default function CollapsibleTable(props) {
   return (
     <TableContainer component={Paper} className={classes.servicesTable}>
       <Table aria-label="collapsible table">

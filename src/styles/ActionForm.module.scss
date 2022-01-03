@@ -1,0 +1,95 @@
+@import './variables';
+
+.login,
+.window__container {
+    margin: calc(0.5em + 0.7vw);
+    font-size: calc(0.5rem + 0.5vw);
+
+    &__register {
+        margin-top: 2em;
+    }
+
+    &__alert {
+        margin-top: 1.5em;
+        color: #8d2929;
+        opacity: 0;
+        transition: opacity 0.3s ease-in;
+        -moz-user-select: none; 
+        -khtml-user-select: none; 
+        -webkit-user-select: none; 
+        -o-user-select: none;
+        user-select: none;
+
+        &Show {
+            opacity: 1;
+        }
+
+        &Register {
+            color: #481313;
+            margin: 1em 0 0.2em 0;
+        }
+    }
+}
+
+.window {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    margin: auto;
+    width: 40vw;
+    height: fit-content;
+    z-index: 2;
+    text-align: center;
+    background-color: #786e60;
+    padding: 1em;
+    border-radius: 30px;
+    box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.7);
+
+    &__icon {
+        float: right;
+        cursor: pointer;
+        color: white;
+        transition: 0.5s;
+
+        &:hover {
+            color: black;
+        }
+    }
+}
+
+.login h1,
+.window__container h1 {
+    margin-bottom: 1em;
+}
+
+.login__form,
+.window__form {
+    margin-bottom: 0.5em;
+
+    input {
+        margin: 0.8em 0;
+        font-size: 1rem;
+        padding: 10px;
+        width: 50%;
+        box-shadow: 5px 10px 10px rgba(0, 0, 0, 0.7);
+        border: none;
+        outline: none;
+        border-radius: 10px;
+    }
+}
+
+.login__button,
+.window__button {
+    @extend %btn-primary;
+    font-size: 1.3rem;
+    margin: calc(0.3em + 0.3vw) auto;
+}
+
+.login__buttons,
+.window__buttons {
+    width: 40%;
+    margin: 0 auto;
+    display: flex;
+}

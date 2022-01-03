@@ -4,16 +4,7 @@
     @extend %page-container;
 
     &__title {
-        font-size: 4em;
-        font-style: italic;
-        letter-spacing: 1px;
-        font-weight: 600;
-        box-shadow: 5px 15px 30px #0e0e0e91;
-        width: fit-content;
-        margin-top: 0.3em;
-        padding: 0.2em 0.4em;
-        border: 4px #483b23 solid;
-        background-color: #c0a291e0;
+        @extend %page-title;
     }
 
     &__calendar {
@@ -44,5 +35,28 @@
                 @extend %btn-page-transition-icon-left;
             }
         }
+
+        &Hide {
+            @extend %btn-page-transition-hide;
+        }
+    }
+
+    &__pageTextLeft, &__pageTextRight {
+        @extend %page-text;
+    }
+
+    &__pageText {
+        &Left {
+            left: 90px;
+        }
+
+        &Right {
+            right: 90px;
+        }
+    }
+
+    &__pageBtnIconRight:hover +  &__pageTextRight,
+    &__pageBtnIconLeft:hover +  &__pageTextLeft {
+        opacity: 1;
     }
 }
