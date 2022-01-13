@@ -7,8 +7,8 @@ import { IconContext } from 'react-icons';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Background from '../components/windowBackground/Background';
-import ServiceAddForm from '../components/actionForm/addForm/ServiceAddForm';
-import BarberAddForm from '../components/actionForm/addForm/BarberAddForm';
+import ServiceAddForm from '../components/actionForm/addForm/ServiceForm';
+import BarberForm from '../components/actionForm/addForm/BarberForm';
 import RegisterForm from '../components/loginForm/RegisterForm';
 
 function AdministrationPanel(props) {
@@ -21,9 +21,16 @@ function AdministrationPanel(props) {
     const [ addAccountIsOpen, setAddAccountState ] = useState(false);
 
     const [ editAccountIsOpen, setEditAccountState ] = useState(false);
+    const [ editBarberIsOpen, setEditBarberState ] = useState(false);
+    const [ editServiceIsOpen, setEditServiceState ] = useState(false);
+
     const [ accountId, setAccountId ] = useState('');
+    const [ barberId, setBarberId ] = useState('');
+    const [ serviceId, setServiceId ] = useState('');
 
     const [ accountIsAdded, setAccountIsAddedState ] = useState(false);
+    const [ barberIsAdded, setBarberIsAddedState ] = useState(false);
+    const [ serviceIsAdded, setServiceIsAddedState ] = useState(false);
 
     const navigate = useNavigate();
 
@@ -62,25 +69,42 @@ function AdministrationPanel(props) {
         setAccountId(accountId);
     }
 
-    function closeAddAccount() {
-        setAddAccountState(false);
-        setEditAccountState(false);
+    function openEditBarber(barberId) {
+        setEditBarberState(true);
+        setBarberId(barberId);
     }
 
-    function closeAddBarber() {
-        setAddBarberState(false);
+    function openEditService(serviceId) {
+        setEditServiceState(true);
+        setServiceId(serviceId);
     }
 
-    function closeAddService() {
-        setAddServiceState(false);
+    function userAdded() {
+        setAccountIsAddedState(true);
+    }
+
+    function barberAdded() {
+        setBarberIsAddedState(true);
+    }
+
+    function serviceAdded() {
+        setServiceIsAddedState(true);
     }
 
     function goToServices() {
         navigate('/services');
     }
 
-    function userIsAdded() {
-        setAccountIsAddedState(true);
+    function closeWindow() {
+        setAddAccountState(false);
+        setEditAccountState(false);
+        setAddBarberState(false);
+        setEditBarberState(false);
+        setAddServiceState(false);
+        setEditServiceState(false);
+        setAccountIsAddedState(false);
+        setBarberIsAddedState(false);
+        setServiceIsAddedState(false);
     }
 
     return (
@@ -114,9 +138,9 @@ function AdministrationPanel(props) {
                         >
                             <AdministrationTable
                                 openAddBarber={openAddBarber}
-                                servicesPageIsOpen={servicesPageIsOpen}
+                                openEditBarber={openEditBarber}
                                 barbersPageIsOpen={barbersPageIsOpen}
-                                accountsPageIsOpen={accountsPageIsOpen}
+                                barberIsAdded={barberIsAdded}
                             />
                         </motion.div>
                     </div>
@@ -136,10 +160,10 @@ function AdministrationPanel(props) {
                             <AdministrationTable
                                 openAddAccount={openAddAccount}
                                 openEditAccount={openEditAccount}
-                                servicesPageIsOpen={servicesPageIsOpen}
-                                barbersPageIsOpen={barbersPageIsOpen}
                                 accountsPageIsOpen={accountsPageIsOpen}
                                 accountIsAdded={accountIsAdded}
+                                userLoggedIn={props.userLoggedIn}
+                                userId={props.userId}
                             />
                         </motion.div>
                     </div>
@@ -158,9 +182,9 @@ function AdministrationPanel(props) {
                         >
                             <AdministrationTable
                                 openAddService={openAddService}
+                                openEditService={openEditService}
                                 servicesPageIsOpen={servicesPageIsOpen}
-                                barbersPageIsOpen={barbersPageIsOpen}
-                                accountsPageIsOpen={accountsPageIsOpen}
+                                serviceIsAdded={serviceIsAdded}
                             />
                         </motion.div>
                     </div>
@@ -169,22 +193,50 @@ function AdministrationPanel(props) {
             <div className={classes.panel__pageBtnHide}></div>
             {addServiceIsOpen &&
                 <div>
-                    <ServiceAddForm onCloseBtnClick={closeAddService}/>
+                    <ServiceAddForm 
+                        onCloseBtnClick={closeWindow}
+                        serviceAdded={serviceAdded}
+                    />
                     <Background />
                 </div>
             }
             {addBarberIsOpen &&
                 <div>
-                    <BarberAddForm onCloseBtnClick={closeAddBarber}/>
+                    <BarberForm 
+                        onCloseBtnClick={closeWindow}
+                        barberAdded={barberAdded}
+                    />
                     <Background />
                 </div>
             }
             {addAccountIsOpen &&
                 <div>
                     <RegisterForm 
-                        onCloseBtnClick={closeAddAccount}
+                        onCloseBtnClick={closeWindow}
+                        userAdded={userAdded}
                         administrationPanelIsOpen={true}
-                        userIsAdded={userIsAdded}
+                    />
+                    <Background />
+                </div>
+            }
+            {editServiceIsOpen &&
+                <div>
+                    <ServiceAddForm 
+                        onCloseBtnClick={closeWindow}
+                        editServiceIsOpen={true}
+                        serviceId={serviceId}
+                        serviceAdded={serviceAdded}
+                    />
+                    <Background />
+                </div>
+            }
+            {editBarberIsOpen &&
+                <div>
+                    <BarberForm 
+                        onCloseBtnClick={closeWindow}
+                        editBarberIsOpen={true}
+                        barberId={barberId}
+                        barberAdded={barberAdded}
                     />
                     <Background />
                 </div>
@@ -192,13 +244,13 @@ function AdministrationPanel(props) {
             {editAccountIsOpen &&
                 <div>
                     <RegisterForm 
-                        onCloseBtnClick={closeAddAccount}
-                        administrationPanelIsOpen={true}
+                        onCloseBtnClick={closeWindow}
                         editAccountIsOpen={true}
+                        accountId={accountId}
+                        userAdded={userAdded}
+                        administrationPanelIsOpen={true}
                         userLoggedIn={props.userLoggedIn}
                         setUsername={props.setUsername}
-                        accountId={accountId}
-                        userIsAdded={userIsAdded}
                     />
                     <Background />
                 </div>

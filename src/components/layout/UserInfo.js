@@ -9,7 +9,8 @@ function UserInfo(props) {
             <IconContext.Provider value={
                 { 
                     size: "45px",
-                    title: "user icon" 
+                    title: "user icon",
+                    className: classes.userInfo__icon
                 }
             }>
                 <FaUserCircle />

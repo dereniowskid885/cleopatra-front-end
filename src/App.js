@@ -15,7 +15,8 @@ class App extends Component {
     this.state = {
       backgroundShow: false,
       registerShow: false,
-      username: ''
+      name: '',
+      userId: ''
     };
 
     this.showRegister = () => {
@@ -32,33 +33,13 @@ class App extends Component {
       });
     };
 
-    this.loginUser = (username) => {
+    this.loginUser = (name, id) => {
       this.setState({
-        username: username
+        name: name,
+        userId: id
       });
     }
   }
-
-  state = {
-    data: null
-  };
-
-  componentDidMount() {
-    this.callBackendAPI()
-      .then(res => this.setState({ data: res.express }))
-      .catch(err => console.log(err));
-  };
-    // fetching the GET route from the Express server which matches the GET route from server.js
-  callBackendAPI = async () => {
-    const response = await fetch('/express_backend');
-    const body = await response.json();
-
-    if (response.status !== 200) {
-      throw Error(body.message);
-    }
-
-    return body;
-  };
 
   render() {
     return (
@@ -73,22 +54,20 @@ class App extends Component {
             }/>
             <Route path="/reservations" element={
               <Reservations
-                userLoggedIn={this.state.username}
+                userLoggedIn={this.state.name}
               /> 
             }/>
             <Route path="/services" element={
               <Services
-                userLoggedIn={this.state.username}
+                userLoggedIn={this.state.name}
               /> 
             }/>
             <Route path="/panel" element={
               <AdministrationPanel
-                userLoggedIn={this.state.username}
+                userLoggedIn={this.state.name}
+                userId={this.state.userId}
                 setUsername={this.loginUser}
               /> 
-            }/>
-            <Route path="/backend" element={
-              <p className="App-intro">{this.state.data}</p>         
             }/>
           </Routes>
         </AnimatePresence>

@@ -5,6 +5,7 @@
     border-radius: 10px;
     border: none;
     transition: 0.5s;
+    font-size: calc(0.4rem + 0.8vw);
 
     &:hover {
         background-color: black;
@@ -27,6 +28,13 @@
         border: 3px solid wheat;
         opacity: 0.7;
         animation: in 0.5s;
+        height: calc(15px + 3vw);
+        width: calc(15px + 3vw);
+
+        // @media only screen and (max-width: 1000px) {
+        //     width: 40px;
+        //     height: 40px;
+        // }
 
         &-left {
             transform: rotate(180deg);
@@ -46,6 +54,7 @@
 }
 
 %page-container {
+    font-size: calc(8px + 0.3vw);
     height: 100vh;
     display: flex;
     flex-direction: row;
@@ -73,6 +82,7 @@
 }
 
 %page-text {
+    font-size: calc(0.5em + 0.8vw);
     color: wheat;
     text-shadow: 3px 3px 20px black;
     letter-spacing: 2px;
@@ -80,6 +90,23 @@
     transition: all 0.5s;
     position: absolute;
     text-align: center;
+    user-select: none;
+
+    &-left {
+        left: calc(7px + 5vw);
+
+        @media only screen and (max-width: 1100px) {
+            display: none;
+        }
+    }
+
+    &-right {
+        right: calc(7px + 5vw);
+
+        @media only screen and (max-width: 1100px) {
+            display: none;
+        }
+    }
 }
 
 @keyframes out {

@@ -9,16 +9,19 @@ import ServicesTable from '../components/items/ServicesTable';
 
 function Services(props) {
     const [ barbersPageIsOpen, setBarbersPageState ] = useState(false);
+    const [ servicesPageIsOpen, setServicesPageState ] = useState(true);
     const [ subpageOpen, setSubpageOpenState ] = useState(false);
     const navigate = useNavigate();
 
     function openBarbersPage() {
+        setServicesPageState(false);
         setBarbersPageState(true);
         setSubpageOpenState(true);
     }
 
     function openServicesPage() {
         setBarbersPageState(false);
+        setServicesPageState(true);
     }
 
     function goToReservations() {
@@ -45,7 +48,7 @@ function Services(props) {
                 <h2 className={classes.services__pageTextLeft}>Rezerwacje</h2>
             </div>
             <motion.div initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}} className={classes.services__wrapper}>
-                { barbersPageIsOpen &&
+                {barbersPageIsOpen &&
                     <div className={classes.services__content}>
                         <h1 className={`${classes.services__title} ${subpageOpen && classes.services__titleAnimation}`}>Fryzjerzy</h1>
                         <h2 className={classes.services__subpage} onClick={openServicesPage}>Usługi</h2>
@@ -56,11 +59,13 @@ function Services(props) {
                             transition={{duration: 0.5}}
                             className={classes.services__contentWrapper}
                         >
-                            <ServicesTable />
+                            <ServicesTable
+                                barbersPageIsOpen={barbersPageIsOpen}
+                            />
                         </motion.div>
                     </div>
                 }
-                { !barbersPageIsOpen &&
+                {servicesPageIsOpen &&
                     <div className={classes.services__content}>
                         <h1 className={`${classes.services__title} ${subpageOpen && classes.services__titleAnimation}`}>Usługi</h1>
                         <h2 className={classes.services__subpage} onClick={openBarbersPage}>Fryzjerzy</h2>
@@ -71,7 +76,9 @@ function Services(props) {
                             transition={{duration: 0.5}}
                             className={classes.services__contentWrapper}
                         >
-                            <ServicesTable />
+                            <ServicesTable
+                                servicesPageIsOpen={servicesPageIsOpen}
+                            />
                         </motion.div>
                     </div>
                 }

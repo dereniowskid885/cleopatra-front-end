@@ -15,53 +15,53 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import classes from '../../styles/Tables.module.scss';
 
-function createData(name, calories, fat, carbs, protein, price) {
-  return {
-    name,
-    calories,
-    fat,
-    carbs,
-    protein,
-    price,
-    history: [
-      {
-        date: '2020-01-05',
-        customerId: '11091700',
-        amount: 3,
-      },
-      {
-        date: '2020-01-02',
-        customerId: 'Anonymous',
-        amount: 1,
-      },
-    ],
-  };
-}
-
 function Row(props) {
   const { row } = props;
   const [ open, setOpen ] = React.useState(false);
 
   return (
     <React.Fragment>
-      <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-        <TableCell>
-          <IconButton
-            aria-label="expand row"
-            size="small"
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
-          </IconButton>
-        </TableCell>
-        <TableCell component="th" scope="row">
-          {row.name}
-        </TableCell>
-        <TableCell align="right">{row.calories}</TableCell>
-        <TableCell align="right">{row.fat}</TableCell>
-        <TableCell align="right">{row.carbs}</TableCell>
-        <TableCell align="right">{row.protein}</TableCell>
-      </TableRow>
+      {props.servicesPageIsOpen &&
+        <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+          <TableCell>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {row.name}
+          </TableCell>
+          <TableCell align="left">{row.price} zł</TableCell>
+          <TableCell align="left">{row.time} minut</TableCell>
+          <TableCell align="left">
+            {row.gender === 'm' ? 'Mężczyźni' : 'Kobiety'}
+          </TableCell>
+          <TableCell align="left">{row.comment}</TableCell>
+        </TableRow>
+      }
+      {props.barbersPageIsOpen &&
+        <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+          <TableCell>
+            <IconButton
+              aria-label="expand row"
+              size="small"
+              onClick={() => setOpen(!open)}
+            >
+              {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            </IconButton>
+          </TableCell>
+          <TableCell component="th" scope="row">
+            {row.first_name}
+          </TableCell>
+          <TableCell align="left">{row.last_name}</TableCell>
+          <TableCell align="left">{row.phone_number}</TableCell>
+          <TableCell align="left">{row.email}</TableCell>
+        </TableRow>
+      }
       <TableRow>
         <TableCell style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={6}>
           <Collapse in={open} timeout="auto" unmountOnExit>
@@ -79,7 +79,7 @@ function Row(props) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {row.history.map((historyRow) => (
+                  {/* {row.history.map((historyRow) => (
                     <TableRow key={historyRow.date}>
                       <TableCell component="th" scope="row">
                         {historyRow.date}
@@ -90,7 +90,7 @@ function Row(props) {
                         {Math.round(historyRow.amount * row.price * 100) / 100}
                       </TableCell>
                     </TableRow>
-                  ))}
+                  ))} */}
                 </TableBody>
               </Table>
             </Box>
@@ -119,31 +119,88 @@ Row.propTypes = {
   }).isRequired,
 };
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0),
-  createData('Ice cream sandwich', 237, 9.0),
-  createData('Eclair', 262, 16.0),
-  createData('Cupcake', 305, 3.7),
-  createData('Gingerbread', 356, 3.8)
-];
-
 export default function CollapsibleTable(props) {
+  const [ servicesRows, setServicesRows ] = React.useState([]);
+  const [ barberRows, setBarberRows ] = React.useState([]);
+
+  const updateTables = (page) => {
+    if (page === 'services') {
+      fetch('http://localhost:8080/services')
+      .then(response => { return response.json(); })
+      .then(data => {
+        const tempData = [];
+    
+        for (const key in data) {
+          const item = {
+            _id: key,
+            ...data[key]
+          };
+    
+          tempData.push(item);
+        }
+    
+        setServicesRows(tempData);
+      });
+    } else if (page === 'barbers') {
+      fetch('http://localhost:8080/hairdressers')
+      .then(response => { return response.json(); })
+      .then(data => {
+        const tempData = [];
+    
+        for (const key in data) {
+          const item = {
+            _id: key,
+            ...data[key]
+          };
+    
+          tempData.push(item);
+        }
+    
+        setBarberRows(tempData);
+      });
+    }
+  }
+
+  React.useEffect(() => { updateTables('services'); updateTables('barbers'); }, []);
+
   return (
     <TableContainer component={Paper} className={classes.servicesTable}>
       <Table aria-label="collapsible table">
         <TableHead className={classes.servicesTable__head}>
-          <TableRow>
-            <TableCell />
-            <TableCell>Usługa</TableCell>
-            <TableCell align="right">Cena</TableCell>
-            <TableCell align="right">Czas&nbsp;(m)</TableCell>
-            <TableCell />
-            <TableCell />
-          </TableRow>
+          {props.servicesPageIsOpen &&
+            <TableRow>
+              <TableCell />
+              <TableCell>Nazwa usługi</TableCell>
+              <TableCell>Cena</TableCell>
+              <TableCell>Czas trwania</TableCell>
+              <TableCell>Płeć</TableCell>
+              <TableCell>Komentarz</TableCell>
+            </TableRow>   
+          }
+          {props.barbersPageIsOpen &&
+            <TableRow>
+              <TableCell />
+              <TableCell>Imię</TableCell>
+              <TableCell>Nazwisko</TableCell>
+              <TableCell>Numer telefonu</TableCell>
+              <TableCell>E-mail</TableCell>
+            </TableRow>   
+          }
         </TableHead>
         <TableBody className={classes.servicesTable__body}>
-          {rows.map((row) => (
-            <Row key={row.name} row={row} />
+          {props.servicesPageIsOpen && servicesRows.map((row) => (
+            <Row 
+              key={row._id} 
+              row={row}
+              servicesPageIsOpen={props.servicesPageIsOpen}
+            />
+          ))}
+          {props.barbersPageIsOpen && barberRows.map((row) => (
+            <Row 
+              key={row._id} 
+              row={row}
+              barbersPageIsOpen={props.barbersPageIsOpen}
+            />
           ))}
         </TableBody>
       </Table>

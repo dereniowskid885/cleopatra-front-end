@@ -7,18 +7,16 @@
         @extend %page-title;
     }
 
-    &__calendar {
-        width: 60vw !important;
-        border-radius: 10px;
-        margin: 0 auto;
-    }
-
-    &__table {
-        
-    }
-
     &__wrapper {
         padding: 1em;
+        height: 100vh;
+        overflow: scroll;
+        overflow-x: hidden;
+        
+        &::-webkit-scrollbar {
+            width: 0;
+            background: transparent;
+        }
     }
 
     &__content {
@@ -47,11 +45,11 @@
 
     &__pageText {
         &Left {
-            left: 90px;
+            @extend %page-text-left;
         }
 
         &Right {
-            right: 90px;
+            @extend %page-text-right;
         }
     }
 
@@ -59,4 +57,78 @@
     &__pageBtnIconLeft:hover +  &__pageTextLeft {
         opacity: 1;
     }
+
+    &__table {
+        position: relative;
+    }
+
+    &__button {
+        @extend %btn-primary;
+        position: absolute;
+        top: 15px;
+        left: 0;
+        right: 0;
+        margin: auto;
+    }
+}
+
+div.reservations__calendar {
+    width: 70vw;
+    border: 4px #483b23 solid;
+    background-color: #bbbfbeba;;
+}
+
+div.reservations__table {
+    width: 70vw;
+    border: 4px #483b23 solid;
+    margin-top: 2em;
+}
+
+div.reservations__table div {
+    background-color: #c0a291e0;
+}
+
+div.reservations__table div > div > span {
+    display: none;
+}
+
+div.reservations__table table {
+    background-color: #c0a291e0;
+}
+
+div.reservations__table table thead tr th {
+    background-color: #c0a291e0;
+    z-index: 0;
+}
+
+span.MuiIcon-fontSizeSmall {
+    width: fit-content;
+}
+
+div.reservations__table div > h6 {
+    letter-spacing: 1px;
+    font-weight: 600;
+    font-size: 1.3rem;
+}
+
+div.reservations__table div > button > span > span {
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    visibility: hidden;
+
+    &::after {
+        content: 'x';
+        position: absolute;
+        right: 40%;
+        visibility: visible;
+    }
+}
+
+div.reservations__table div > input::placeholder {
+    visibility: hidden;
+}
+
+div.reservations__table > div > div > div:nth-child(3) {
+    width: 25%;
 }

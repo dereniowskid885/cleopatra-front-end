@@ -20,6 +20,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import AddIcon from '@mui/icons-material/LibraryAdd';
 import EditIcon from '@mui/icons-material/Edit';
 import { visuallyHidden } from '@mui/utils';
+import { useCallback } from 'react';
 import classes from '../../styles/Tables.module.scss';
 
 function createData(name, calories, fat, carbs, protein) {
@@ -78,40 +79,46 @@ function stableSort(array, comparator) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-const headCells = [
+const accountsHeadCells = [
+  {
+    id: 'email',
+    numeric: false,
+    disablePadding: true,
+    label: 'E-mail',
+  },
+  {
+    id: 'password',
+    numeric: false,
+    disablePadding: false,
+    label: 'Hasło',
+  },
+  {
+    id: 'gender',
+    numeric: false,
+    disablePadding: false,
+    label: 'Płeć'
+  },
   {
     id: 'name',
     numeric: false,
-    disablePadding: true,
-    label: 'Dessert (100g serving)',
+    disablePadding: false,
+    label: 'Imię',
   },
   {
-    id: 'calories',
-    numeric: true,
+    id: 'surname',
+    numeric: false,
     disablePadding: false,
-    label: 'Calories',
+    label: 'Nazwisko',
   },
   {
-    id: 'fat',
-    numeric: true,
+    id: 'phone',
+    numeric: false,
     disablePadding: false,
-    label: 'Fat (g)',
-  },
-  {
-    id: 'carbs',
-    numeric: true,
-    disablePadding: false,
-    label: 'Carbs (g)',
-  },
-  {
-    id: 'protein',
-    numeric: true,
-    disablePadding: false,
-    label: 'Protein (g)',
+    label: 'Telefon'
   },
 ];
 
-const accountsHeadCells = [
+const barbersHeadCells = [
   {
     id: 'name',
     numeric: false,
@@ -125,22 +132,49 @@ const accountsHeadCells = [
     label: 'Nazwisko',
   },
   {
+    id: 'phone',
+    numeric: false,
+    disablePadding: false,
+    label: 'Numer telefonu',
+  },
+  {
     id: 'email',
     numeric: false,
     disablePadding: false,
     label: 'E-mail',
   },
   {
-    id: 'username',
+    id: 'birth',
     numeric: false,
     disablePadding: false,
-    label: 'Nazwa użytkownika',
+    label: 'Data urodzenia',
+  }
+];
+
+const servicesHeadCells = [
+  {
+    id: 'name',
+    numeric: false,
+    disablePadding: true,
+    label: 'Nazwa usługi',
   },
   {
-    id: 'password',
+    id: 'price',
     numeric: false,
     disablePadding: false,
-    label: 'Hasło',
+    label: 'Cena (zł)',
+  },
+  {
+    id: 'time',
+    numeric: false,
+    disablePadding: false,
+    label: 'Czas trwania (m)'
+  },
+  {
+    id: 'comment',
+    numeric: false,
+    disablePadding: false,
+    label: 'Komentarz',
   }
 ];
 
@@ -186,7 +220,28 @@ function EnhancedTableHead(props) {
             </TableSortLabel>
           </TableCell>
         ))}
-        {!props.accountsPageIsOpen && headCells.map((headCell) => (
+        {props.barbersPageIsOpen && barbersHeadCells.map((headCell) => (
+          <TableCell
+            key={headCell.id}
+            align={headCell.numeric ? 'right' : 'left'}
+            padding={headCell.disablePadding ? 'none' : 'normal'}
+            sortDirection={orderBy === headCell.id ? order : false}
+          >
+            <TableSortLabel
+              active={orderBy === headCell.id}
+              direction={orderBy === headCell.id ? order : 'asc'}
+              onClick={createSortHandler(headCell.id)}
+            >
+              {headCell.label}
+              {orderBy === headCell.id ? (
+                <Box component="span" sx={visuallyHidden}>
+                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                </Box>
+              ) : null}
+            </TableSortLabel>
+          </TableCell>
+        ))}
+        {props.servicesPageIsOpen && servicesHeadCells.map((headCell) => (
           <TableCell
             key={headCell.id}
             align={headCell.numeric ? 'right' : 'left'}
@@ -279,7 +334,7 @@ const EnhancedTableToolbar = (props) => {
 
       {props.servicesPageIsOpen && (numSelected > 0) && (
         <Tooltip title="Usuń">
-          <IconButton>
+          <IconButton onClick={props.deleteSelected}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
@@ -287,7 +342,7 @@ const EnhancedTableToolbar = (props) => {
 
       {props.servicesPageIsOpen && (numSelected === 1) && (
         <Tooltip title="Edytuj">
-          <IconButton>
+          <IconButton onClick={props.openEditService}>
             <EditIcon />
           </IconButton>
         </Tooltip>
@@ -303,7 +358,7 @@ const EnhancedTableToolbar = (props) => {
 
       {props.barbersPageIsOpen && (numSelected > 0) && (
         <Tooltip title="Usuń">
-          <IconButton>
+          <IconButton onClick={props.deleteSelected}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>
@@ -311,7 +366,7 @@ const EnhancedTableToolbar = (props) => {
 
       {props.barbersPageIsOpen && (numSelected === 1) && (
         <Tooltip title="Edytuj">
-          <IconButton>
+          <IconButton onClick={props.openEditBarber}>
             <EditIcon />
           </IconButton>
         </Tooltip>
@@ -325,7 +380,7 @@ const EnhancedTableToolbar = (props) => {
         </Tooltip>
       }
 
-      {props.accountsPageIsOpen && (numSelected > 0) && (
+      {props.accountsPageIsOpen && (numSelected > 0) && !props.userLoggedIsSelected && (
         <Tooltip title="Usuń">
           <IconButton onClick={props.deleteSelected}>
             <DeleteIcon />
@@ -355,81 +410,102 @@ export default function EnhancedTable(pages) {
   const [ page, setPage ] = React.useState(0);
   const [ rowsPerPage, setRowsPerPage ] = React.useState(5);
   const [ accountRows, setAccountRows ] = React.useState([]);
+  const [ barberRows, setBarberRows ] = React.useState([]);
+  const [ servicesRows, setServicesRows ] = React.useState([]);
+  const [ userLoggedIsSelected, setUserLoggedState ] = React.useState(false);
+  const [ openedTable, setOpenedTable ] = React.useState('');
 
-  React.useEffect(() => {
-    fetch(
-      'https://cleopatra-db-default-rtdb.europe-west1.firebasedatabase.app/users.json'
-    ).then(response => {
-      return response.json();
-    }).then(data => {
-      const tempData = [];
-  
-      for (const key in data) {
-        const item = {
-          id: key,
-          ...data[key]
-        };
-  
-        tempData.push(item);
-      }
-  
-      setAccountRows(tempData);
-    });
-  }, []);
+  const updateTables = useCallback(() => {
+    if (pages.accountsPageIsOpen || pages.accountIsAdded) {
+      fetch('http://localhost:8080/clients')
+      .then(response => { return response.json(); })
+      .then(data => {
+        const tempData = [];
+    
+        for (const key in data) {
+          const item = {
+            _id: key,
+            ...data[key]
+          };
+    
+          tempData.push(item);
+        }
+    
+        setAccountRows(tempData);
+        setOpenedTable('clients');
+      });
+    } else if (pages.barbersPageIsOpen || pages.barberIsAdded) {
+      fetch('http://localhost:8080/hairdressers')
+      .then(response => { return response.json(); })
+      .then(data => {
+        const tempData = [];
+    
+        for (const key in data) {
+          const item = {
+            _id: key,
+            ...data[key]
+          };
+    
+          tempData.push(item);
+        }
+    
+        setBarberRows(tempData);
+        setOpenedTable('hairdressers');
+      });
+    } else if (pages.servicesPageIsOpen || pages.serviceIsAdded) {
+      fetch('http://localhost:8080/services')
+      .then(response => { return response.json(); })
+      .then(data => {
+        const tempData = [];
+    
+        for (const key in data) {
+          const item = {
+            _id: key,
+            ...data[key]
+          };
+    
+          tempData.push(item);
+        }
+    
+        setServicesRows(tempData);
+        setOpenedTable('services');
+      });
+    }
+  }, [pages]);
 
-  if (pages.accountIsAdded) {
-    fetch(
-      'https://cleopatra-db-default-rtdb.europe-west1.firebasedatabase.app/users.json'
-    ).then(response => {
-      return response.json();
-    }).then(data => {
-      const tempData = [];
-  
-      for (const key in data) {
-        const item = {
-          id: key,
-          ...data[key]
-        };
-  
-        tempData.push(item);
-      }
-  
-      setAccountRows(tempData);
-    });
-  }
+  React.useEffect(() => { updateTables(); }, [updateTables]); 
 
   const deleteSelected = () => {
     selected.forEach((id) => {
+      let requestBody = {};
+
+      if (pages.accountsPageIsOpen) { requestBody.clientid = id; } 
+      else if (pages.barbersPageIsOpen) { requestBody.hairdresserid = id; } 
+      else if (pages.servicesPageIsOpen) { requestBody.serviceid = id; }
+
       fetch(
-        'https://cleopatra-db-default-rtdb.europe-west1.firebasedatabase.app/users/' + id + '.json',
+        'http://localhost:8080/' + openedTable + '/' + id + '/delete',
         {
-          method: 'DELETE'
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(requestBody)
         }
       ).then(() => {
-        fetch(
-          'https://cleopatra-db-default-rtdb.europe-west1.firebasedatabase.app/users.json'
-        ).then(response => {
-          return response.json();
-        }).then(data => {
-          const tempData = [];
-      
-          for (const key in data) {
-            const item = {
-              id: key,
-              ...data[key]
-            };
-      
-            tempData.push(item);
-          }
-      
-          setAccountRows(tempData);
-          setSelected([]);
-        });
+        setSelected([]);
+        updateTables();
       });
     });
   };
 
-  const selectedAccountId = () => pages.openEditAccount(selected[0]);
+  const selectedItemId = () => {
+    if (pages.accountsPageIsOpen) {
+      pages.openEditAccount(selected[0]);
+    } else if (pages.barbersPageIsOpen) {
+      pages.openEditBarber(selected[0]);
+    } else if (pages.servicesPageIsOpen) {
+      pages.openEditService(selected[0]);
+    }
+  }
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -439,10 +515,22 @@ export default function EnhancedTable(pages) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = accountRows.map((n) => n.id);
-      setSelected(newSelecteds);
-      return;
+      if (pages.accountsPageIsOpen) {
+        const newSelecteds = accountRows.map((n) => n._id);
+        checkForLoggedUser(newSelecteds);
+        setSelected(newSelecteds);
+        return;
+      } else if (pages.barbersPageIsOpen) {
+        const newSelecteds = barberRows.map((n) => n._id);
+        setSelected(newSelecteds);
+        return;
+      } else if (pages.servicesPageIsOpen) {
+        const newSelecteds = servicesRows.map((n) => n._id);
+        setSelected(newSelecteds);
+        return;
+      }
     }
+    
     setSelected([]);
   };
 
@@ -463,8 +551,9 @@ export default function EnhancedTable(pages) {
       );
     }
 
+    checkForLoggedUser(newSelected);
     setSelected(newSelected);
-  };
+  };  
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -476,6 +565,27 @@ export default function EnhancedTable(pages) {
   };
 
   const isSelected = (id) => selected.indexOf(id) !== -1;
+
+  const checkForLoggedUser = (selected) => {
+    for (const key in selected) {
+      if (selected[key] === pages.userId) {
+        setUserLoggedState(true);
+        break;
+      } else {
+        setUserLoggedState(false);
+      }
+    }
+  };
+
+  const rowCount = () => {
+    if (pages.accountsPageIsOpen) {
+      return accountRows.length;
+    } else if (pages.barbersPageIsOpen) {
+      return barberRows.length;
+    } else if (pages.servicesPageIsOpen) {
+      return servicesRows.length;
+    }
+  }
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -489,11 +599,14 @@ export default function EnhancedTable(pages) {
           openAddService={pages.openAddService}
           openAddBarber={pages.openAddBarber}
           openAddAccount={pages.openAddAccount}
-          openEditAccount={selectedAccountId}
+          openEditAccount={selectedItemId}
+          openEditBarber={selectedItemId}
+          openEditService={selectedItemId}
           accountsPageIsOpen={pages.accountsPageIsOpen}
           barbersPageIsOpen={pages.barbersPageIsOpen}
           servicesPageIsOpen={pages.servicesPageIsOpen}
           deleteSelected={deleteSelected}
+          userLoggedIsSelected={userLoggedIsSelected}
         />
         <TableContainer>
           <Table
@@ -508,8 +621,10 @@ export default function EnhancedTable(pages) {
               orderBy={orderBy}
               onSelectAllClick={handleSelectAllClick}
               onRequestSort={handleRequestSort}
-              rowCount={accountRows.length}
+              rowCount={rowCount()}
               accountsPageIsOpen={pages.accountsPageIsOpen}
+              barbersPageIsOpen={pages.barbersPageIsOpen}
+              servicesPageIsOpen={pages.servicesPageIsOpen}
             />
             <TableBody>
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
@@ -517,17 +632,17 @@ export default function EnhancedTable(pages) {
               {pages.accountsPageIsOpen && stableSort(accountRows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.id);
+                  const isItemSelected = isSelected(row._id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.id)}
+                      onClick={(event) => handleClick(event, row._id)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.id}
+                      key={row._id}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
@@ -545,29 +660,72 @@ export default function EnhancedTable(pages) {
                         scope="row"
                         padding="none"
                       >
-                        {row.name}
+                        {row.email}
                       </TableCell>
-                      <TableCell align="left">{row.surname}</TableCell>
-                      <TableCell align="left">{row.email}</TableCell>
-                      <TableCell align="left">{row.username}</TableCell>
                       <TableCell align="left">{row.password}</TableCell>
+                      <TableCell align="left">{row.gender}</TableCell>
+                      <TableCell align="left">{row.first_name}</TableCell>
+                      <TableCell align="left">{row.last_name}</TableCell>
+                      <TableCell align="left">{row.phone_number}</TableCell>
                     </TableRow>
                   );
-                })}
-              {!pages.accountsPageIsOpen && stableSort(rows, getComparator(order, orderBy))
+                })
+              }
+              {pages.barbersPageIsOpen && stableSort(barberRows, getComparator(order, orderBy))
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const isItemSelected = isSelected(row.name);
+                  const isItemSelected = isSelected(row._id);
                   const labelId = `enhanced-table-checkbox-${index}`;
 
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.name)}
+                      onClick={(event) => handleClick(event, row._id)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}
-                      key={row.name}
+                      key={row._id}
+                      selected={isItemSelected}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': labelId,
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell
+                        component="th"
+                        id={labelId}
+                        scope="row"
+                        padding="none"
+                      >
+                        {row.first_name}
+                      </TableCell>
+                      <TableCell align="left">{row.last_name}</TableCell>
+                      <TableCell align="left">{row.phone_number}</TableCell>
+                      <TableCell align="left">{row.email}</TableCell>
+                      <TableCell align="left">{row.birth}</TableCell>
+                    </TableRow>
+                  );
+                })
+              }
+              {pages.servicesPageIsOpen && stableSort(servicesRows, getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  const isItemSelected = isSelected(row._id);
+                  const labelId = `enhanced-table-checkbox-${index}`;
+
+                  return (
+                    <TableRow
+                      hover
+                      onClick={(event) => handleClick(event, row._id)}
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row._id}
                       selected={isItemSelected}
                     >
                       <TableCell padding="checkbox">
@@ -587,13 +745,13 @@ export default function EnhancedTable(pages) {
                       >
                         {row.name}
                       </TableCell>
-                      <TableCell align="right">{row.calories}</TableCell>
-                      <TableCell align="right">{row.fat}</TableCell>
-                      <TableCell align="right">{row.carbs}</TableCell>
-                      <TableCell align="right">{row.protein}</TableCell>
+                      <TableCell align="left">{row.price}</TableCell>
+                      <TableCell align="left">{row.approx_time}</TableCell>
+                      <TableCell align="left">{row.notes}</TableCell>
                     </TableRow>
                   );
-                })}
+                })
+              }
               {emptyRows > 0 && (
                 <TableRow
                   style={{
@@ -609,7 +767,7 @@ export default function EnhancedTable(pages) {
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={accountRows.length}
+          count={rowCount()}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

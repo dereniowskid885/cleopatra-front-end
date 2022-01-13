@@ -77,11 +77,11 @@
 
     &__pageText {
         &Left {
-            left: 90px;
+            @extend %page-text-left;
         }
 
         &Right {
-            right: 90px;
+            @extend %page-text-right;
         }
     }
 
