@@ -73,6 +73,7 @@
 }
 
 div.reservations__calendar {
+    font-size: calc(0.5rem + 0.5vw);
     width: 70vw;
     border: 4px #483b23 solid;
     background-color: #bbbfbeba;;
@@ -93,10 +94,12 @@ div.reservations__table div > div > span {
 }
 
 div.reservations__table table {
+    font-size: calc(0.5rem + 0.4vw);
     background-color: #c0a291e0;
 }
 
 div.reservations__table table thead tr th {
+    font-size: calc(0.5rem + 0.7vw);
     background-color: #c0a291e0;
     z-index: 0;
 }
@@ -121,12 +124,9 @@ div.reservations__table div > button > span > span {
         content: 'x';
         position: absolute;
         right: 40%;
+        top: 15%;
         visibility: visible;
     }
-}
-
-div.reservations__table div > input::placeholder {
-    visibility: hidden;
 }
 
 div.reservations__table > div > div > div:nth-child(3) {

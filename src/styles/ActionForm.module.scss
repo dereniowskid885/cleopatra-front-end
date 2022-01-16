@@ -67,7 +67,8 @@
     &__form {
         padding: 1em;
         height: 65vh;
-        overflow: auto;
+        overflow: inherit;
+        position: relative;
 
         &::-webkit-scrollbar {
             width: 0;

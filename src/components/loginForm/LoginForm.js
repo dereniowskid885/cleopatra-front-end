@@ -1,7 +1,6 @@
 import classes from '../../styles/ActionForm.module.scss';
 import { useRef, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import bcrypt from 'bcryptjs';
 
 function LoginForm(props) {
     const [ users, setUsers ] = useState([]);

@@ -8,6 +8,7 @@ import RegisterForm from './components/loginForm/RegisterForm';
 import { Route, Routes } from 'react-router-dom';
 import { Component, React } from 'react';
 import { AnimatePresence } from 'framer-motion';
+import 'react-datepicker/dist/react-datepicker.css';
 
 class App extends Component {
   constructor(props) {

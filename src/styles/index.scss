@@ -21,3 +21,27 @@ body {
     color: inherit;
   }
 }
+
+/* DatePicker */
+
+div.react-datepicker__triangle {
+  &::after,
+  &::before {
+    top: 20px !important;
+    left: -1px !important;
+    transform: rotate(90deg);
+  }
+}
+
+div.react-datepicker-popper {
+  inset: calc(-11% + 0.5vw) auto auto -100px !important;
+
+@media only screen and (max-width: 1350px) {
+  inset: calc(-14% + 0.5vw) auto auto -100px !important;
+  }
+}
+
+div.react-datepicker-time__header,
+ul.react-datepicker__time-list li {
+  font-size: calc(0.4rem + 0.5vw);
+}

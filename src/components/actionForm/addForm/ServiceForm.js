@@ -104,11 +104,19 @@ function ServiceForm(props) {
                             <label htmlFor="name"><h2>Nazwa usługi</h2></label>
                             <input type="text" name="name" id="name" ref={nameRef} defaultValue={serviceData.name} required/>
                             <label htmlFor="price"><h2>Cena (zł)</h2></label>
-                            <input type="number" name="price" id="price" ref={priceRef} defaultValue={serviceData.price} required/>
+                            <input type="number" name="price" id="price" ref={priceRef} defaultValue={serviceData.price} min={1} max={200} required/>
                             <label htmlFor="time"><h2>Czas trwania (m)</h2></label>
-                            <input type="number" name="time" id="time" ref={timeRef} defaultValue={serviceData.approx_time} required/>
+                            <select name="time" id="time" ref={timeRef} defaultValue={serviceData.approx_time}>
+                                <option value={serviceData.approx_time} disabled selected>{serviceData.approx_time} minut</option>
+                                <option value="15">15 minut</option>
+                                <option value="30">30 minut</option>
+                                <option value="45">45 minut</option>
+                                <option value="60">60 minut</option>
+                                <option value="75">75 minut</option>
+                                <option value="90">90 minut</option>
+                            </select>
                             <label htmlFor="comment"><h2>Komentarz</h2></label>
-                            <textarea name="comment" id="comment" rows="8" cols="30" ref={commentRef} defaultValue={serviceData.notes} required/>
+                            <textarea name="comment" id="comment" rows="6" cols="30" ref={commentRef} defaultValue={serviceData.notes} required/>
                         </div>
                         <div className={classes.window__buttons}>
                             <button className={classes.window__button} type="submit">Zatwierdź</button>

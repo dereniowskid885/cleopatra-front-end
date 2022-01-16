@@ -1,5 +1,4 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import Box from '@mui/material/Box';
 import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
@@ -36,11 +35,8 @@ function Row(props) {
             {row.name}
           </TableCell>
           <TableCell align="left">{row.price} zł</TableCell>
-          <TableCell align="left">{row.time} minut</TableCell>
-          <TableCell align="left">
-            {row.gender === 'm' ? 'Mężczyźni' : 'Kobiety'}
-          </TableCell>
-          <TableCell align="left">{row.comment}</TableCell>
+          <TableCell align="left">{row.approx_time} minut</TableCell>
+          <TableCell align="left">{row.notes}</TableCell>
         </TableRow>
       }
       {props.barbersPageIsOpen &&
@@ -101,24 +97,6 @@ function Row(props) {
   );
 }
 
-Row.propTypes = {
-  row: PropTypes.shape({
-    calories: PropTypes.number.isRequired,
-    carbs: PropTypes.number.isRequired,
-    fat: PropTypes.number.isRequired,
-    history: PropTypes.arrayOf(
-      PropTypes.shape({
-        amount: PropTypes.number.isRequired,
-        customerId: PropTypes.string.isRequired,
-        date: PropTypes.string.isRequired,
-      }),
-    ).isRequired,
-    name: PropTypes.string.isRequired,
-    price: PropTypes.number.isRequired,
-    protein: PropTypes.number.isRequired,
-  }).isRequired,
-};
-
 export default function CollapsibleTable(props) {
   const [ servicesRows, setServicesRows ] = React.useState([]);
   const [ barberRows, setBarberRows ] = React.useState([]);
@@ -173,7 +151,6 @@ export default function CollapsibleTable(props) {
               <TableCell>Nazwa usługi</TableCell>
               <TableCell>Cena</TableCell>
               <TableCell>Czas trwania</TableCell>
-              <TableCell>Płeć</TableCell>
               <TableCell>Komentarz</TableCell>
             </TableRow>   
           }
