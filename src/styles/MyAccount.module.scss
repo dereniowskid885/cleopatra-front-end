@@ -1,6 +1,6 @@
 @import './variables';
 
-.panel {
+.account {
     @extend %page-container;
 
     &__title {
@@ -34,32 +34,37 @@
         }
     }
 
-    &__pageButtons {
-        display: flex;
-        align-items: center;
+    &__icon {
+        width: calc(20px + 2vw);
+        height: calc(20px + 2vw);
     }
 
-    &__wrapper {
-        height: 100vh;
-        width: 100%;
-        overflow: scroll;
-        overflow-x: hidden;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+    &__details {
+        padding: 1.5em 2em;
+        border: 4px #483b23 solid;
+        background-color: #c0a2919e;
+        margin-top: 1em;
+        box-shadow: 5px 15px 30px #0e0e0e91;
+        font-size: calc(0.8rem + 0.4vw);
+        letter-spacing: 1px;
 
-        &::-webkit-scrollbar {
-            width: 0;
-            background: transparent;
+        h2 {
+            letter-spacing: 1px;
+            margin-top: 0.5em;
+        }
+
+        h3 {
+            margin-top: 0.1em;
+            padding: 0.3em;
+            border: 4px #483b23 solid;
+            background-color: #c0a2919e;
+            box-shadow: 5px 15px 30px #0e0e0e91; 
         }
     }
 
-    &__content {
-        @extend %page-content;
-
-        &Wrapper {
-            width: 100%;
-        }
+    &__button {
+        @extend %btn-primary;
+        margin: 1em auto 0 auto;
     }
 
     &__pageBtn {
@@ -76,6 +81,29 @@
         &Hide {
             @extend %btn-page-transition-hide;
         }
+
+        &Panel {
+            display: contents;
+        }
+    }
+
+    &__content {
+        @extend %page-content;
+        width: 100%;
+
+        &Wrapper {
+            width: fit-content;
+        }
+    }
+
+    &__wrapper {
+        text-align: center;
+        width: 80%;
+    }
+
+    &__pageButtons {
+        display: flex;
+        align-items: center;
     }
 
     &__pageTextLeft, &__pageTextRight {

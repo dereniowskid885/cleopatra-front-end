@@ -67,7 +67,7 @@
     &__form {
         padding: 1em;
         height: 65vh;
-        overflow: inherit;
+        overflow: auto;
         position: relative;
 
         &::-webkit-scrollbar {
@@ -89,6 +89,11 @@
 
         @media only screen and (max-width: 1350px) {
             height: initial;
+        }
+
+        &TimePicker {
+            overflow: inherit;
+            height: fit-content;
         }
     }
 

@@ -7,14 +7,17 @@ import { IconContext } from 'react-icons';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import Background from '../components/windowBackground/Background';
-import ServiceAddForm from '../components/actionForm/addForm/ServiceForm';
+import ServiceForm from '../components/actionForm/addForm/ServiceForm';
 import BarberForm from '../components/actionForm/addForm/BarberForm';
 import RegisterForm from '../components/loginForm/RegisterForm';
+import VisitForm from '../components/actionForm/addForm/VisitForm';
+import LoginErrorPage from '../pages/LoginErrorPage';
 
 function AdministrationPanel(props) {
     const [ barbersPageIsOpen, setBarbersPageState ] = useState(false);
-    const [ accountsPageIsOpen, setAccountsPageState ] = useState(false);
-    const [ servicesPageIsOpen, setServicesPageState ] = useState(true);
+    const [ accountsPageIsOpen, setAccountsPageState ] = useState(true);
+    const [ servicesPageIsOpen, setServicesPageState ] = useState(false);
+    const [ visitsPageIsOpen, setVisitsPageState ] = useState(false)
 
     const [ addServiceIsOpen, setAddServiceState ] = useState(false);
     const [ addBarberIsOpen, setAddBarberState ] = useState(false);
@@ -23,31 +26,48 @@ function AdministrationPanel(props) {
     const [ editAccountIsOpen, setEditAccountState ] = useState(false);
     const [ editBarberIsOpen, setEditBarberState ] = useState(false);
     const [ editServiceIsOpen, setEditServiceState ] = useState(false);
+    const [ editVisitIsOpen, setEditVisitState ] = useState(false);
 
     const [ accountId, setAccountId ] = useState('');
     const [ barberId, setBarberId ] = useState('');
     const [ serviceId, setServiceId ] = useState('');
+    const [ visitId, setVisitId ] = useState('');
 
     const [ accountIsAdded, setAccountIsAddedState ] = useState(false);
     const [ barberIsAdded, setBarberIsAddedState ] = useState(false);
     const [ serviceIsAdded, setServiceIsAddedState ] = useState(false);
+    const [ visitIsAdded, setVisitIsAddedState ] = useState(false);
 
     const navigate = useNavigate();
+
+    if (props.userLoggedIn === '') {
+        return <LoginErrorPage />
+    }
 
     function openBarbersPage() {
         setBarbersPageState(true);
         setAccountsPageState(false);
         setServicesPageState(false);
+        setVisitsPageState(false);
     }
 
     function openAccountsPage() {
         setAccountsPageState(true);
         setServicesPageState(false);
         setBarbersPageState(false);
+        setVisitsPageState(false);
     }
 
     function openServicesPage() {
         setServicesPageState(true);
+        setAccountsPageState(false);
+        setBarbersPageState(false);
+        setVisitsPageState(false);
+    }
+
+    function openVisitsPage() {
+        setVisitsPageState(true);
+        setServicesPageState(false);
         setAccountsPageState(false);
         setBarbersPageState(false);
     }
@@ -79,6 +99,11 @@ function AdministrationPanel(props) {
         setServiceId(serviceId);
     }
 
+    function openEditVisit(visitId) {
+        setEditVisitState(true);
+        setVisitId(visitId);
+    }
+
     function userAdded() {
         setAccountIsAddedState(true);
     }
@@ -91,8 +116,12 @@ function AdministrationPanel(props) {
         setServiceIsAddedState(true);
     }
 
-    function goToServices() {
-        navigate('/services');
+    function visitAdded() {
+        setVisitIsAddedState(true);
+    }
+
+    function goToAccount() {
+        navigate('/account');
     }
 
     function closeWindow() {
@@ -102,9 +131,11 @@ function AdministrationPanel(props) {
         setEditBarberState(false);
         setAddServiceState(false);
         setEditServiceState(false);
+        setEditVisitState(false);
         setAccountIsAddedState(false);
         setBarberIsAddedState(false);
         setServiceIsAddedState(false);
+        setVisitIsAddedState(false);
     }
 
     return (
@@ -118,17 +149,20 @@ function AdministrationPanel(props) {
                     title: "window close button" 
                     }
                 }>
-                    <AiFillRightCircle onClick={goToServices}/>
+                    <AiFillRightCircle onClick={goToAccount}/>
                 </IconContext.Provider>
-                <h2 className={classes.panel__pageTextLeft}>Usługi</h2>
+                <h2 className={classes.panel__pageTextLeft}>Moje konto</h2>
             </div>
             <motion.div initial={{opacity: 0}} animate={{opacity: 1}} exit={{opacity: 0}} className={classes.panel__wrapper}>
                 <h1 className={classes.panel__title}>Panel administracyjny</h1>
                 { barbersPageIsOpen &&
                     <div className={classes.panel__content}>
-                        <h2 className={classes.panel__subpage + ' ' + classes.panel__subpageSelected}>Fryzjerzy</h2>
-                        <h2 className={classes.panel__subpage} onClick={openServicesPage}>Usługi</h2>
-                        <h2 className={classes.panel__subpage} onClick={openAccountsPage}>Konta</h2>
+                        <div className={classes.panel__pageButtons}>
+                            <h2 className={classes.panel__subpage} onClick={openAccountsPage}>Konta</h2>
+                            <h2 className={classes.panel__subpage} onClick={openServicesPage}>Usługi</h2>
+                            <h2 className={classes.panel__subpage + ' ' + classes.panel__subpageSelected}>Fryzjerzy</h2>
+                            <h2 className={classes.panel__subpage} onClick={openVisitsPage}>Wizyty</h2>
+                        </div>
                         <motion.div 
                             initial={{opacity: 0}} 
                             animate={{opacity: 1}} 
@@ -147,9 +181,12 @@ function AdministrationPanel(props) {
                 }
                 { accountsPageIsOpen &&
                     <div className={classes.panel__content}>
-                        <h2 className={classes.panel__subpage + ' ' + classes.panel__subpageSelected}>Konta</h2>
-                        <h2 className={classes.panel__subpage} onClick={openServicesPage}>Usługi</h2>
-                        <h2 className={classes.panel__subpage} onClick={openBarbersPage}>Fryzjerzy</h2>
+                        <div className={classes.panel__pageButtons}>
+                            <h2 className={classes.panel__subpage + ' ' + classes.panel__subpageSelected}>Konta</h2>
+                            <h2 className={classes.panel__subpage} onClick={openServicesPage}>Usługi</h2>
+                            <h2 className={classes.panel__subpage} onClick={openBarbersPage}>Fryzjerzy</h2>
+                            <h2 className={classes.panel__subpage} onClick={openVisitsPage}>Wizyty</h2>
+                        </div>
                         <motion.div 
                             initial={{opacity: 0}} 
                             animate={{opacity: 1}} 
@@ -170,9 +207,12 @@ function AdministrationPanel(props) {
                 }
                 { servicesPageIsOpen &&
                     <div className={classes.panel__content}>
-                        <h2 className={classes.panel__subpage + ' ' + classes.panel__subpageSelected}>Usługi</h2>
-                        <h2 className={classes.panel__subpage} onClick={openBarbersPage}>Fryzjerzy</h2>
-                        <h2 className={classes.panel__subpage} onClick={openAccountsPage}>Konta</h2>
+                        <div className={classes.panel__pageButtons}>
+                            <h2 className={classes.panel__subpage} onClick={openAccountsPage}>Konta</h2>
+                            <h2 className={classes.panel__subpage + ' ' + classes.panel__subpageSelected}>Usługi</h2>
+                            <h2 className={classes.panel__subpage} onClick={openBarbersPage}>Fryzjerzy</h2>
+                            <h2 className={classes.panel__subpage} onClick={openVisitsPage}>Wizyty</h2>
+                        </div>
                         <motion.div 
                             initial={{opacity: 0}} 
                             animate={{opacity: 1}} 
@@ -189,18 +229,41 @@ function AdministrationPanel(props) {
                         </motion.div>
                     </div>
                 }
+                { visitsPageIsOpen &&
+                    <div className={classes.panel__content}>
+                        <div className={classes.panel__pageButtons}>
+                            <h2 className={classes.panel__subpage} onClick={openAccountsPage}>Konta</h2>
+                            <h2 className={classes.panel__subpage} onClick={openServicesPage}>Usługi</h2>
+                            <h2 className={classes.panel__subpage} onClick={openBarbersPage}>Fryzjerzy</h2>
+                            <h2 className={classes.panel__subpage + ' ' + classes.panel__subpageSelected}>Wizyty</h2>
+                        </div>
+                        <motion.div 
+                            initial={{opacity: 0}} 
+                            animate={{opacity: 1}} 
+                            exit={{opacity: 0}}
+                            transition={{duration: 0.5}}
+                            className={classes.panel__contentWrapper}
+                        >
+                            <AdministrationTable
+                                openEditVisit={openEditVisit}
+                                visitsPageIsOpen={visitsPageIsOpen}
+                                visitIsAdded={visitIsAdded}
+                            />
+                        </motion.div>
+                    </div>
+                }
             </motion.div>
             <div className={classes.panel__pageBtnHide}></div>
-            {addServiceIsOpen &&
+            { addServiceIsOpen &&
                 <div>
-                    <ServiceAddForm 
+                    <ServiceForm 
                         onCloseBtnClick={closeWindow}
                         serviceAdded={serviceAdded}
                     />
                     <Background />
                 </div>
             }
-            {addBarberIsOpen &&
+            { addBarberIsOpen &&
                 <div>
                     <BarberForm 
                         onCloseBtnClick={closeWindow}
@@ -209,7 +272,7 @@ function AdministrationPanel(props) {
                     <Background />
                 </div>
             }
-            {addAccountIsOpen &&
+            { addAccountIsOpen &&
                 <div>
                     <RegisterForm 
                         onCloseBtnClick={closeWindow}
@@ -219,9 +282,9 @@ function AdministrationPanel(props) {
                     <Background />
                 </div>
             }
-            {editServiceIsOpen &&
+            { editServiceIsOpen &&
                 <div>
-                    <ServiceAddForm 
+                    <ServiceForm 
                         onCloseBtnClick={closeWindow}
                         editServiceIsOpen={true}
                         serviceId={serviceId}
@@ -230,7 +293,7 @@ function AdministrationPanel(props) {
                     <Background />
                 </div>
             }
-            {editBarberIsOpen &&
+            { editBarberIsOpen &&
                 <div>
                     <BarberForm 
                         onCloseBtnClick={closeWindow}
@@ -241,7 +304,20 @@ function AdministrationPanel(props) {
                     <Background />
                 </div>
             }
-            {editAccountIsOpen &&
+            { editVisitIsOpen &&
+                <div>
+                    <VisitForm 
+                        onCloseBtnClick={closeWindow}
+                        editVisitIsOpen={true}
+                        myAccountEdit={true}
+                        visitId={visitId}
+                        isAdmin={props.isAdmin}
+                        visitAdded={visitAdded}
+                    />
+                    <Background />
+                </div>
+            }
+            { editAccountIsOpen &&
                 <div>
                     <RegisterForm 
                         onCloseBtnClick={closeWindow}

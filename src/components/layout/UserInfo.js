@@ -1,9 +1,15 @@
 import classes from '../../styles/UserInfo.module.scss';
 import { FaUserCircle } from "react-icons/fa";
 import { IconContext } from 'react-icons';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function UserInfo(props) {
+    const navigate = useNavigate();
+
+    function goToAccount() {
+        navigate('/account');
+    }
+
     return (
         <div className={classes.userInfo}>
             <IconContext.Provider value={
@@ -13,9 +19,9 @@ function UserInfo(props) {
                     className: classes.userInfo__icon
                 }
             }>
-                <FaUserCircle />
+                <FaUserCircle onClick={goToAccount}/>
             </IconContext.Provider>
-            <h2 className={classes.userInfo__message}>Witaj, {props.userLoggedIn}!</h2>
+            <h2 className={classes.userInfo__message} onClick={goToAccount}>Witaj, {props.userLoggedIn}!</h2>
             <button className={classes.userInfo__button}><Link to="/">Wyloguj się</Link></button>
         </div>
     );

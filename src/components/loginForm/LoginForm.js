@@ -65,6 +65,7 @@ function LoginForm(props) {
             name: '',
             email: emailRef.current.value,
             password: passwordRef.current.value,
+            isAdmin: false
         }
 
         users.forEach(user => {
@@ -72,11 +73,12 @@ function LoginForm(props) {
                 userAuth = true;
                 userData.id = user._id;
                 userData.name = user.first_name;
+                userData.isAdmin = user.admin;
             }
         });
 
         if (userAuth) {
-            props.loginUser(userData.name, userData.id);
+            props.loginUser(userData.name, userData.id, userData.isAdmin);
             navigate('/reservations');
         } else {
             props.showLoginAlert();

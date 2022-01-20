@@ -1,5 +1,6 @@
 div.servicesTable,
-div.administrationTable {
+div.administrationTable,
+div.userTable {
     background-color: #c0a291e0;
     width: 90%;
     margin: 2em auto;
@@ -9,15 +10,21 @@ div.administrationTable {
     box-shadow: 5px 15px 30px #0e0e0e91;
 }
 
+div.userTable {
+    width: 100%;
+    border: 4px solid #483b23;
+    background-color: #c0a2919e;
+}
+
 div.administrationTable {
     border: 4px solid #483b23;
     background-color: #bbbfbe;
 }
 
 thead.servicesTable__head tr th,
-table.administrationTable thead tr th {
+table.administrationTable thead tr th,
+table.userTable thead tr th {
     font-size: 1.5rem;
-    font-style: italic;
     font-weight: bold;
 }
 
@@ -26,13 +33,17 @@ thead.servicesTable__head tr th {
 }
 
 table.administrationTable thead,
-table.administrationTable tbody tr {
+table.administrationTable tbody tr,
+table.userTable thead,
+table.userTable tbody tr {
     border-bottom: 4px solid #483b23;
     border-top: 4px solid #483b23;
 }
 
 table.administrationTable tbody tr th,
-table.administrationTable tbody tr td  {
+table.administrationTable tbody tr td,
+table.userTable tbody tr th,
+table.userTable tbody tr td {
     font-size: 1.2rem;
 }
 
@@ -44,9 +55,14 @@ tbody.servicesTable__body tr {
     }
 }
 
-div.administrationTable__toolbar {
+div.administrationTable__toolbar,
+div.userTable__toolbar {
     font-size: 1.2rem;
     line-height: 1.43;
     letter-spacing: 0.01071em;
     color: rgba(0, 0, 0, 0.87);
+}
+
+div.userTable__toolbar {
+    text-align: left;
 }

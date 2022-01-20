@@ -2,16 +2,21 @@ import  classes from '../styles/Services.module.scss';
 import { AiFillRightCircle } from "react-icons/ai";
 import { IconContext } from 'react-icons';
 import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import UserInfo from '../components/layout/UserInfo';
 import ServicesTable from '../components/items/ServicesTable';
+import LoginErrorPage from '../pages/LoginErrorPage';
+import { useNavigate } from 'react-router-dom';
 
 function Services(props) {
     const [ barbersPageIsOpen, setBarbersPageState ] = useState(false);
     const [ servicesPageIsOpen, setServicesPageState ] = useState(true);
     const [ subpageOpen, setSubpageOpenState ] = useState(false);
     const navigate = useNavigate();
+
+    if (props.userLoggedIn === '') {
+        return <LoginErrorPage />
+    }
 
     function openBarbersPage() {
         setServicesPageState(false);
@@ -28,8 +33,8 @@ function Services(props) {
         navigate('/reservations');
     }
 
-    function goToPanel() {
-        navigate('/panel');
+    function goToAccount() {
+        navigate('/account');
     }
 
     return (
@@ -91,9 +96,9 @@ function Services(props) {
                         title: "window close button" 
                     }
                 }>
-                    <AiFillRightCircle onClick={goToPanel} />
+                    <AiFillRightCircle onClick={goToAccount} />
                 </IconContext.Provider>
-                <h2 className={classes.services__pageTextRight}>Panel <br />administracyjny</h2>
+                <h2 className={classes.services__pageTextRight}>Moje konto</h2>
             </div>
         </main>
     );

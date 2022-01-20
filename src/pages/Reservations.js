@@ -14,10 +14,7 @@ import React from 'react';
 class Reservations extends React.Component {
   state = {
     date: new Date(),
-    reservationBtnIsClicked: false,
-    title: new Date().toLocaleDateString(),
-    data: [],
-    columns: [
+    columnTitles: [
       {
         title: "Godzina",
         field: "when",
@@ -32,22 +29,18 @@ class Reservations extends React.Component {
       },
       {
         title: "Klient",
-        field: "client_name",
+        field: "client",
       }
-    ]
+    ],
+    columnData: [],
+    reservationBtnIsClicked: false
   }
-
-  // [
-  //   { hour: "10:00 - 12:00", service: "Czesanie", client_name: "Andrzej", barber: "Staszek" },
-  //   { hour: "12:00 - 13:00", service: "Strzyżenie męskie", client_name: "Jacek", barber: "Zdzisław" },
-  //   { hour: "13:00 - 14:00", service: "Koloryzacja damska", client_name: "Aleksandra", barber: "Bronisław" }
-  // ]
 
   fetchVisits = () => {
     fetch('http://localhost:8080/visits')
     .then(response => { return response.json(); })
     .then(data => {
-      const tempData = [];
+      const visits = [];
 
       for (const key in data) {
         const item = {
@@ -55,11 +48,28 @@ class Reservations extends React.Component {
           ...data[key]
         };
 
-        tempData.push(item);
+        const visitDate = new Date(item.when);
+
+        if (visitDate.toLocaleDateString() === this.state.date.toLocaleDateString()) {
+          const visitStartTime = visitDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const visitServiceTime = new Date();
+
+          visitServiceTime.setTime(visitDate.getTime() + (item.service.approx_time * 60 * 1000));
+
+          const visitEndTime = visitServiceTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+          const visitDuration = visitStartTime + ' - ' + visitEndTime;
+          const visit = {
+            when: visitDuration,
+            service: item.service.name,
+            client: item.client.first_name,
+            hairdresser: item.hairdresser.first_name
+          }
+
+          visits.push(visit);
+        }
       }
 
-      console.log(tempData);
-      // this.setState({ data: tempData });
+      this.setState({ columnData: visits });
     });
   }
 
@@ -67,11 +77,16 @@ class Reservations extends React.Component {
     this.fetchVisits();
   }
 
-  onChange = date => this.setState({ date });
+  componentDidUpdate() {
+    if(this.props.userLoggedIn === '') {
+      this.props.navigate('/error');
+    }
+  }
+
+  onChange = date => { this.setState({ date: date }); this.fetchVisits(); };
   closeWindow = () => this.setState({ reservationBtnIsClicked: false });
   showVisitForm = () => this.setState({ reservationBtnIsClicked: true });
   goToServices = () => { this.props.navigate('/services') };
-  onClickDay = day => this.setState({ title: day.toLocaleDateString("pl-PL", { day: "2-digit", month: "2-digit", year: "numeric" }) });
 
   render() {
     return (
@@ -81,11 +96,14 @@ class Reservations extends React.Component {
           {this.state.reservationBtnIsClicked &&
             <div>
               <VisitForm
-                title={this.state.title}
+                title={this.state.date.toLocaleDateString()}
                 year={this.state.date.getFullYear()}
                 day={this.state.date.getDate()}
                 month={this.state.date.getMonth()}
                 onCloseBtnClick={this.closeWindow}
+                fetchVisits={this.fetchVisits}
+                clientName={this.props.userLoggedIn}
+                isAdmin={this.props.isAdmin}
               />
               <Background />
             </div>
@@ -97,14 +115,12 @@ class Reservations extends React.Component {
             <Calendar 
               className={classes.reservations__calendar}
               onChange={this.onChange}
-              value={this.state.date}
-              onClickDay={this.onClickDay}
             />
           <div className={classes.reservations__table}>
               <MaterialTable
-                title={this.state.title} 
-                data={this.state.data}
-                columns={this.state.columns}
+                title={this.state.date.toLocaleDateString()} 
+                data={this.state.columnData}
+                columns={this.state.columnTitles}
                 options={{ search: true, paging: false, filtering: true }}
                 localization={{
                   body: {

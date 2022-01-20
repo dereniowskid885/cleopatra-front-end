@@ -7,6 +7,7 @@ import { useRef, useState, useEffect } from 'react';
 function BarberForm(props) {
     const [ phoneAlert, setPhoneAlertState ] = useState(false);
     const [ emailAlert, setEmailAlertState ] = useState(false);
+    const [ skipValidation, setSkipValidationState ] = useState(false);
 
     const [ barberData, setBarberData ] = useState({});
     const [ barbers, setBarbers ] = useState([]);
@@ -44,6 +45,10 @@ function BarberForm(props) {
         }
     }, [props.editBarberIsOpen, props.barberId]);
 
+    function overwrite() {
+        setSkipValidationState(true);
+    }
+
     function addBarber(e) {
         e.preventDefault();
         let registerAllowed = true;
@@ -53,27 +58,19 @@ function BarberForm(props) {
 
         if (barbers.length) {
             barbers.forEach(barber => {
-                if (barber.email === emailRef.current.value) {
-                    if (props.editBarberIsOpen) {
-                        registerAllowed = true;
-                    } else {
-                        setEmailAlertState(true);
-                        registerAllowed = false;
-                    }
+                if (barber.phone_number === phoneRef.current.value) {
+                    setPhoneAlertState(true);
+                    registerAllowed = false;
                 }
 
-                if (barber.phone === phoneRef.current.value) {
-                    if (props.editBarberIsOpen) {
-                        registerAllowed = true;
-                    } else {
-                        setPhoneAlertState(true);
-                        registerAllowed = false;
-                    }
+                if (barber.email === emailRef.current.value) {
+                    setEmailAlertState(true);
+                    registerAllowed = false;
                 }
             });
         }
 
-        if (registerAllowed) {
+        if (registerAllowed || skipValidation) {
             const barberData = {
                 first_name: nameRef.current.value,
                 last_name: surnameRef.current.value,
@@ -92,6 +89,7 @@ function BarberForm(props) {
                     headers: { 'Content-type': 'application/json' }
                 }
             ).then(() => {
+                setSkipValidationState(false);
                 props.barberAdded();
                 props.onCloseBtnClick();
             });
@@ -115,26 +113,32 @@ function BarberForm(props) {
                     <form onSubmit={addBarber}>
                         <div className={classes.window__form}>
                             <label htmlFor="name"><h2>Imię</h2></label>
-                            <input type="text" name="name" id="name" ref={nameRef} defaultValue={barberData.first_name} required/>
+                            <input type="text" name="name" id="name" ref={nameRef} defaultValue={barberData.first_name} minLength={2} maxLength={13} required/>
                             <label htmlFor="surname"><h2>Nazwisko</h2></label>
-                            <input type="text" name="surname" id="surname" ref={surnameRef} defaultValue={barberData.last_name} required/>
-                            <label htmlFor="phone"><h2>Numer telefonu</h2></label>
-                            <input type="tel" name="phone" id="phone" ref={phoneRef} defaultValue={barberData.phone_number} minLength={12} maxLength={15} required/>
-                            <label htmlFor="email"><h2>E-mail</h2></label>
-                            <input type="email" name="email" id="email" ref={emailRef} defaultValue={barberData.email} required/>
+                            <input type="text" name="surname" id="surname" ref={surnameRef} defaultValue={barberData.last_name} minLength={2} maxLength={20} required/>
                             <label htmlFor="birth"><h2>Data urodzenia</h2></label>
                             <input type="date" name="birth" id="birth" ref={birthRef} defaultValue={barberData.birth} required/>
+                            <label htmlFor="email"><h2>E-mail</h2></label>
+                            <input type="email" name="email" id="email" ref={emailRef} defaultValue={barberData.email} minLength={5} maxLength={25} required/>
+                            <label htmlFor="phone"><h2>Numer telefonu</h2></label>
+                            <input type="text" name="phone" id="phone" ref={phoneRef} defaultValue={barberData.phone_number} minLength={12} maxLength={15} required/>
                         </div>
                         <div className={classes.window__buttons}>
                             <button className={classes.window__button} type="submit">Zatwierdź</button>
+                            {props.editBarberIsOpen &&
+                                <button className={classes.window__button} type="button" onClick={overwrite}>Nadpisz</button>
+                            }
                             <button className={classes.window__button} onClick={props.onCloseBtnClick}>Anuluj</button>
                         </div>
                     </form>
                 </div>
-                {emailAlert && 
+                {skipValidation &&
+                    <Fade><h3 className={classes.window__alert}>Tryb nadpisywania włączony</h3></Fade>
+                }
+                {(emailAlert && !skipValidation) && 
                     <Fade><h3 className={classes.window__alert}>Fryzjer z danym adresem e-mail już istnieje.</h3></Fade>
                 }
-                {phoneAlert &&
+                {(phoneAlert && !skipValidation) &&
                     <Fade><h3 className={classes.window__alert}>Fryzjer z danym numerem telefonu już istnieje.</h3></Fade>
                 }
             </div>

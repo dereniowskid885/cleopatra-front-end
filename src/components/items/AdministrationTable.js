@@ -23,32 +23,6 @@ import { visuallyHidden } from '@mui/utils';
 import { useCallback } from 'react';
 import classes from '../../styles/Tables.module.scss';
 
-function createData(name, calories, fat, carbs, protein) {
-  return {
-    name,
-    calories,
-    fat,
-    carbs,
-    protein,
-  };
-}
-
-const rows = [
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Donut', 452, 25.0, 51, 4.9),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-  createData('Honeycomb', 408, 3.2, 87, 6.5),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Jelly Bean', 375, 0.0, 94, 0.0),
-  createData('KitKat', 518, 26.0, 65, 7.0),
-  createData('Lollipop', 392, 0.2, 98, 0.0),
-  createData('Marshmallow', 318, 0, 81, 2.0),
-  createData('Nougat', 360, 19.0, 9, 37.0),
-  createData('Oreo', 437, 18.0, 63, 4.0),
-];
-
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
     return -1;
@@ -156,25 +130,52 @@ const servicesHeadCells = [
     id: 'name',
     numeric: false,
     disablePadding: true,
-    label: 'Nazwa usługi',
+    label: 'Usługa',
   },
   {
     id: 'price',
     numeric: false,
     disablePadding: false,
-    label: 'Cena (zł)',
+    label: 'Cena',
   },
   {
     id: 'time',
     numeric: false,
     disablePadding: false,
-    label: 'Czas trwania (m)'
+    label: 'Czas trwania'
   },
   {
     id: 'comment',
     numeric: false,
     disablePadding: false,
     label: 'Komentarz',
+  }
+];
+
+const visitsHeadCells = [
+  {
+    id: 'when',
+    numeric: false,
+    disablePadding: true,
+    label: 'Termin',
+  },
+  {
+    id: 'service',
+    numeric: false,
+    disablePadding: false,
+    label: 'Usługa',
+  },
+  {
+    id: 'barber',
+    numeric: false,
+    disablePadding: false,
+    label: 'Fryzjer'
+  },
+  {
+    id: 'client',
+    numeric: false,
+    disablePadding: false,
+    label: 'Klient',
   }
 ];
 
@@ -262,19 +263,31 @@ function EnhancedTableHead(props) {
             </TableSortLabel>
           </TableCell>
         ))}
+        {props.visitsPageIsOpen && visitsHeadCells.map((headCell) => (
+          <TableCell
+            key={headCell.id}
+            align={headCell.numeric ? 'right' : 'left'}
+            padding={headCell.disablePadding ? 'none' : 'normal'}
+            sortDirection={orderBy === headCell.id ? order : false}
+          >
+            <TableSortLabel
+              active={orderBy === headCell.id}
+              direction={orderBy === headCell.id ? order : 'asc'}
+              onClick={createSortHandler(headCell.id)}
+            >
+              {headCell.label}
+              {orderBy === headCell.id ? (
+                <Box component="span" sx={visuallyHidden}>
+                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                </Box>
+              ) : null}
+            </TableSortLabel>
+          </TableCell>
+        ))}
       </TableRow>
     </TableHead>
   );
 }
-
-EnhancedTableHead.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-};
 
 const EnhancedTableToolbar = (props) => {
   const { numSelected } = props;
@@ -395,6 +408,23 @@ const EnhancedTableToolbar = (props) => {
           </IconButton>
         </Tooltip>
       )}
+
+      {props.visitsPageIsOpen && (numSelected > 0) && (
+        <Tooltip title="Usuń">
+          <IconButton onClick={props.deleteSelected}>
+            <DeleteIcon />
+          </IconButton>
+        </Tooltip>
+      )}
+
+      {props.visitsPageIsOpen && (numSelected === 1) && (
+        <Tooltip title="Edytuj">
+          <IconButton onClick={props.openEditVisit}>
+            <EditIcon />
+          </IconButton>
+        </Tooltip>
+      )}
+
     </Toolbar>
   );
 };
@@ -412,6 +442,7 @@ export default function EnhancedTable(pages) {
   const [ accountRows, setAccountRows ] = React.useState([]);
   const [ barberRows, setBarberRows ] = React.useState([]);
   const [ servicesRows, setServicesRows ] = React.useState([]);
+  const [ visitsRows, setVisitsRows ] = React.useState([]);
   const [ userLoggedIsSelected, setUserLoggedState ] = React.useState(false);
   const [ openedTable, setOpenedTable ] = React.useState('');
 
@@ -470,6 +501,27 @@ export default function EnhancedTable(pages) {
         setServicesRows(tempData);
         setOpenedTable('services');
       });
+    } else if (pages.visitsPageIsOpen || pages.visitIsAdded) {
+      fetch('http://localhost:8080/visits')
+      .then(response => { return response.json(); })
+      .then(data => {
+        const tempData = [];
+    
+        for (const key in data) {
+          const item = {
+            _id: key,
+            ...data[key]
+          };
+
+          const tempDate = new Date(item.when);
+          item.when = tempDate.toLocaleDateString() + ' ' + tempDate.toLocaleTimeString();
+    
+          tempData.push(item);
+        }
+    
+        setVisitsRows(tempData);
+        setOpenedTable('visits');
+      });
     }
   }, [pages]);
 
@@ -479,9 +531,89 @@ export default function EnhancedTable(pages) {
     selected.forEach((id) => {
       let requestBody = {};
 
-      if (pages.accountsPageIsOpen) { requestBody.clientid = id; } 
-      else if (pages.barbersPageIsOpen) { requestBody.hairdresserid = id; } 
-      else if (pages.servicesPageIsOpen) { requestBody.serviceid = id; }
+      if (pages.accountsPageIsOpen) { 
+        requestBody.clientid = id;
+        
+        fetch('http://localhost:8080/visits')
+        .then(response => { return response.json(); })
+        .then(data => {
+          for (const key in data) {
+            const item = {
+              _id: key,
+              ...data[key]
+            };
+
+            if (item.client._id === id) {
+              let requestBody = {}
+              requestBody.visitid = item._id;
+
+              fetch(
+                'http://localhost:8080/visits/' + item._id + '/delete',
+                {
+                  method: 'POST',
+                  headers: { 'Content-type': 'application/json' },
+                  body: JSON.stringify(requestBody)
+                }
+              );
+            }
+          }
+        });
+      } else if (pages.barbersPageIsOpen) { 
+        requestBody.hairdresserid = id;
+
+        fetch('http://localhost:8080/visits')
+        .then(response => { return response.json(); })
+        .then(data => {
+          for (const key in data) {
+            const item = {
+              _id: key,
+              ...data[key]
+            };
+
+            if (item.hairdresser._id === id) {
+              let requestBody = {}
+              requestBody.visitid = item._id;
+
+              fetch(
+                'http://localhost:8080/visits/' + item._id + '/delete',
+                {
+                  method: 'POST',
+                  headers: { 'Content-type': 'application/json' },
+                  body: JSON.stringify(requestBody)
+                }
+              );
+            }
+          }
+        });
+      } else if (pages.servicesPageIsOpen) { 
+        requestBody.serviceid = id;
+
+        fetch('http://localhost:8080/visits')
+        .then(response => { return response.json(); })
+        .then(data => {
+          for (const key in data) {
+            const item = {
+              _id: key,
+              ...data[key]
+            };
+
+            if (item.service._id === id) {
+              let requestBody = {}
+              requestBody.visitid = item._id;
+
+              fetch(
+                'http://localhost:8080/visits/' + item._id + '/delete',
+                {
+                  method: 'POST',
+                  headers: { 'Content-type': 'application/json' },
+                  body: JSON.stringify(requestBody)
+                }
+              );
+            }
+          }
+        });
+      }
+      else if (pages.visitsPageIsOpen) { requestBody.visitid = id; }
 
       fetch(
         'http://localhost:8080/' + openedTable + '/' + id + '/delete',
@@ -504,6 +636,8 @@ export default function EnhancedTable(pages) {
       pages.openEditBarber(selected[0]);
     } else if (pages.servicesPageIsOpen) {
       pages.openEditService(selected[0]);
+    } else if (pages.visitsPageIsOpen) {
+      pages.openEditVisit(selected[0]);
     }
   }
 
@@ -526,6 +660,10 @@ export default function EnhancedTable(pages) {
         return;
       } else if (pages.servicesPageIsOpen) {
         const newSelecteds = servicesRows.map((n) => n._id);
+        setSelected(newSelecteds);
+        return;
+      } else if (pages.visitsPageIsOpen) {
+        const newSelecteds = visitsRows.map((n) => n._id);
         setSelected(newSelecteds);
         return;
       }
@@ -584,12 +722,23 @@ export default function EnhancedTable(pages) {
       return barberRows.length;
     } else if (pages.servicesPageIsOpen) {
       return servicesRows.length;
+    } else if (pages.visitsPageIsOpen) {
+      return visitsRows.length;
     }
-  }
+  };
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  const emptyRows = () => {
+    if (pages.accountsPageIsOpen) {
+      return page > 0 ? Math.max(0, (1 + page) * rowsPerPage - accountRows.length) : 0;
+    } else if (pages.barbersPageIsOpen) {
+      return page > 0 ? Math.max(0, (1 + page) * rowsPerPage - barberRows.length) : 0;
+    } else if (pages.servicesPageIsOpen) {
+      return page > 0 ? Math.max(0, (1 + page) * rowsPerPage - servicesRows.length) : 0;
+    } else if (pages.visitsPageIsOpen) {
+      return page > 0 ? Math.max(0, (1 + page) * rowsPerPage - visitsRows.length) : 0;
+    }
+  };
 
   return (
     <Box>
@@ -599,12 +748,15 @@ export default function EnhancedTable(pages) {
           openAddService={pages.openAddService}
           openAddBarber={pages.openAddBarber}
           openAddAccount={pages.openAddAccount}
+          openAddVisit={pages.openAddVisit}
           openEditAccount={selectedItemId}
           openEditBarber={selectedItemId}
           openEditService={selectedItemId}
+          openEditVisit={selectedItemId}
           accountsPageIsOpen={pages.accountsPageIsOpen}
           barbersPageIsOpen={pages.barbersPageIsOpen}
           servicesPageIsOpen={pages.servicesPageIsOpen}
+          visitsPageIsOpen={pages.visitsPageIsOpen}
           deleteSelected={deleteSelected}
           userLoggedIsSelected={userLoggedIsSelected}
         />
@@ -625,6 +777,7 @@ export default function EnhancedTable(pages) {
               accountsPageIsOpen={pages.accountsPageIsOpen}
               barbersPageIsOpen={pages.barbersPageIsOpen}
               servicesPageIsOpen={pages.servicesPageIsOpen}
+              visitsPageIsOpen={pages.visitsPageIsOpen}
             />
             <TableBody>
               {/* if you don't need to support IE11, you can replace the `stableSort` call with:
@@ -745,9 +898,49 @@ export default function EnhancedTable(pages) {
                       >
                         {row.name}
                       </TableCell>
-                      <TableCell align="left">{row.price}</TableCell>
-                      <TableCell align="left">{row.approx_time}</TableCell>
+                      <TableCell align="left">{row.price} zł</TableCell>
+                      <TableCell align="left">{row.approx_time} minut</TableCell>
                       <TableCell align="left">{row.notes}</TableCell>
+                    </TableRow>
+                  );
+                })
+              }
+              {pages.visitsPageIsOpen && stableSort(visitsRows, getComparator(order, orderBy))
+                .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                .map((row, index) => {
+                  const isItemSelected = isSelected(row._id);
+                  const labelId = `enhanced-table-checkbox-${index}`;
+
+                  return (
+                    <TableRow
+                      hover
+                      onClick={(event) => handleClick(event, row._id)}
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row._id}
+                      selected={isItemSelected}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            'aria-labelledby': labelId,
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell
+                        component="th"
+                        id={labelId}
+                        scope="row"
+                        padding="none"
+                      >
+                        {row.when}
+                      </TableCell>
+                      <TableCell align="left">{row.service.name}</TableCell>
+                      <TableCell align="left">{row.hairdresser.first_name}</TableCell>
+                      <TableCell align="left">{row.client.first_name}</TableCell>
                     </TableRow>
                   );
                 })

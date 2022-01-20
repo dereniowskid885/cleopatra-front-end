@@ -9,6 +9,7 @@ function RegisterForm(props) {
     const [ passwordAlert, setPasswordAlertState ] = useState(false);
     const [ phoneAlert, setPhoneAlertState ] = useState(false);
     const [ registerAlert, setRegisterAlertState ] = useState(false);
+    const [ skipValidation, setSkipValidationState ] = useState(false);
 
     const [ userData, setUserData ] = useState({});
     const [ users, setUsers ] = useState([]);
@@ -63,22 +64,14 @@ function RegisterForm(props) {
                     registerAllowed = false;
                 }
                 
-                if (user.email === emailRef.current.value) {
-                    if (props.editAccountIsOpen) {
-                        registerAllowed = true;
-                    } else {
-                        setEmailAlertState(true);
-                        registerAllowed = false;
-                    }
+                if (user.email === emailRef.current.value && user.email !== userData.email) {
+                    setEmailAlertState(true);
+                    registerAllowed = false;
                 }
 
-                if (user.phone_number === phoneRef.current.value) {
-                    if (props.editAccountIsOpen) {
-                        registerAllowed = true;
-                    } else {
-                        setPhoneAlertState(true);
-                        registerAllowed = false;
-                    }
+                if (user.phone_number === phoneRef.current.value && user.phone_number !== userData.phone_number) {
+                    setPhoneAlertState(true);
+                    registerAllowed = false;
                 }
             });
         } else if (passwordRef.current.value !== passwordConfirmRef.current.value) {
@@ -93,7 +86,8 @@ function RegisterForm(props) {
                 gender: genderRef.current.value,
                 first_name: nameRef.current.value,
                 last_name: surnameRef.current.value,
-                phone_number: phoneRef.current.value
+                phone_number: phoneRef.current.value,
+                admin: props.isAdmin
             }
 
             fetch(
@@ -109,6 +103,9 @@ function RegisterForm(props) {
                 if (props.administrationPanelIsOpen) {
                     props.userAdded();
                     props.onCloseBtnClick();
+                } else if (props.myAccountPageIsOpen) {
+                    props.updateUserData(userData);
+                    props.onCloseBtnClick();
                 } else {
                     setRegisterAlertState(true);
                     window.location.reload();
@@ -116,8 +113,8 @@ function RegisterForm(props) {
             });
         }
 
-        if (props.editAccountIsOpen && props.userLoggedIn === userData.first_name) {
-            props.setUsername(nameRef.current.value);
+        if ((props.editAccountIsOpen && props.userLoggedIn === userData.first_name) || props.myAccountPageIsOpen) {
+            props.setUsername(nameRef.current.value, props.accountId, props.isAdmin);
         }
     }
 
@@ -140,20 +137,20 @@ function RegisterForm(props) {
                     <form onSubmit={registerUser}>
                         <div className={classes.window__form}>
                             <label htmlFor="email"><h2>E-mail</h2></label>
-                            <input type="email" name="email" id="email" ref={emailRef} defaultValue={userData.email} required/>
+                            <input type="email" name="email" id="email" ref={emailRef} defaultValue={userData.email} minLength={5} maxLength={25} required/>
                             <label htmlFor="password"><h2>Hasło</h2></label>
-                            <input type="password" name="password" id="password" ref={passwordRef} defaultValue={userData.password} required/>
+                            <input type="password" name="password" id="password" ref={passwordRef} defaultValue={userData.password} minLength={3} maxLength={20} required/>
                             <label htmlFor="password_confirm"><h2>Powtórz hasło</h2></label>
-                            <input type="password" name="password_confirm" id="password_confirm" ref={passwordConfirmRef} defaultValue={userData.password} required/>
+                            <input type="password" name="password_confirm" id="password_confirm" ref={passwordConfirmRef} defaultValue={userData.password} minLength={3} maxLength={20} required/>
                             <label htmlFor="gender"><h2>Płeć</h2></label>
                             <select name="gender" id="gender" ref={genderRef} required>
                                 {userData.gender === 'm' ? <option value="m" selected>Mężczyzna</option> : <option value="m">Mężczyzna</option>}
                                 {userData.gender === 'k' ? <option value="k" selected>Kobieta</option> : <option value="k">Kobieta</option>}
                             </select>
                             <label htmlFor="name"><h2>Imię</h2></label>
-                            <input type="text" name="name" id="name" ref={nameRef} defaultValue={userData.first_name} required/>
+                            <input type="text" name="name" id="name" ref={nameRef} defaultValue={userData.first_name} minLength={2} maxLength={13} required/>
                             <label htmlFor="surname"><h2>Nazwisko</h2></label>
-                            <input type="text" name="surname" id="surname" ref={surnameRef} defaultValue={userData.last_name} required/>
+                            <input type="text" name="surname" id="surname" ref={surnameRef} defaultValue={userData.last_name} minLength={2} maxLength={20} required/>
                             <label htmlFor="phone"><h2>Numer telefonu</h2></label>
                             <input type="tel" name="phone" id="phone" ref={phoneRef} defaultValue={userData.phone_number} minLength={12} maxLength={15} required/>
                         </div>
