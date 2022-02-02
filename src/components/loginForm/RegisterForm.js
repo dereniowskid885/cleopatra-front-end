@@ -3,16 +3,18 @@ import Fade from 'react-reveal/Fade';
 import { useRef, useState, useEffect } from 'react';
 import { IoMdCloseCircle } from "react-icons/io";
 import { IconContext } from 'react-icons';
+import PhoneInput from 'react-phone-number-input';
 
 function RegisterForm(props) {
     const [ emailAlert, setEmailAlertState ] = useState(false);
     const [ passwordAlert, setPasswordAlertState ] = useState(false);
     const [ phoneAlert, setPhoneAlertState ] = useState(false);
     const [ registerAlert, setRegisterAlertState ] = useState(false);
-    const [ skipValidation, setSkipValidationState ] = useState(false);
+    const [ phoneLengthAlert, setPhoneLengthAlertState ] = useState(false);
 
     const [ userData, setUserData ] = useState({});
     const [ users, setUsers ] = useState([]);
+    const [ phoneNumber, setPhoneNumber ] = useState();
 
     const passwordRef = useRef();
     const passwordConfirmRef = useRef();
@@ -20,7 +22,6 @@ function RegisterForm(props) {
     const nameRef = useRef();
     const surnameRef = useRef();
     const emailRef = useRef();
-    const phoneRef = useRef();
 
     useEffect(() => {
         fetch('http://localhost:8080/clients')
@@ -45,7 +46,7 @@ function RegisterForm(props) {
         if (props.editAccountIsOpen) {
             fetch('http://localhost:8080/clients/' + props.accountId)
             .then(response => { return response.json(); })
-            .then(data => { setUserData(data); });
+            .then(data => { setUserData(data); setPhoneNumber(data.phone_number) });
         }
     }, [props.editAccountIsOpen, props.accountId]);
 
@@ -56,6 +57,7 @@ function RegisterForm(props) {
         setEmailAlertState(false);
         setPasswordAlertState(false);
         setPhoneAlertState(false);
+        setPhoneLengthAlertState(false);
         
         if (users.length) {
             users.forEach(user => {
@@ -69,8 +71,13 @@ function RegisterForm(props) {
                     registerAllowed = false;
                 }
 
-                if (user.phone_number === phoneRef.current.value && user.phone_number !== userData.phone_number) {
+                if (user.phone_number === phoneNumber && user.phone_number !== userData.phone_number) {
                     setPhoneAlertState(true);
+                    registerAllowed = false;
+                }
+
+                if (phoneNumber.length !== 12) {
+                    setPhoneLengthAlertState(true);
                     registerAllowed = false;
                 }
             });
@@ -86,7 +93,7 @@ function RegisterForm(props) {
                 gender: genderRef.current.value,
                 first_name: nameRef.current.value,
                 last_name: surnameRef.current.value,
-                phone_number: phoneRef.current.value,
+                phone_number: phoneNumber,
                 admin: props.isAdmin
             }
 
@@ -152,7 +159,7 @@ function RegisterForm(props) {
                             <label htmlFor="surname"><h2>Nazwisko</h2></label>
                             <input type="text" name="surname" id="surname" ref={surnameRef} defaultValue={userData.last_name} minLength={2} maxLength={20} required/>
                             <label htmlFor="phone"><h2>Numer telefonu</h2></label>
-                            <input type="tel" name="phone" id="phone" ref={phoneRef} defaultValue={userData.phone_number} minLength={12} maxLength={15} required/>
+                            <PhoneInput name="phone" id="phone" value={phoneNumber} onChange={setPhoneNumber} defaultCountry="PL" placeholder="+48" />
                         </div>
                         <div className={classes.window__buttons}>
                             <button className={classes.window__button} type="submit">Zatwierdź</button>
@@ -171,7 +178,10 @@ function RegisterForm(props) {
                 }
                 {registerAlert &&
                     <Fade><h3 className={classes.window__alert}>Konto założone !</h3></Fade>
-                }     
+                }
+                {phoneLengthAlert &&
+                    <Fade><h3 className={classes.window__alert}>Numer telefonu musi składać się z 9 cyfr</h3></Fade>
+                }
             </div>
         </Fade>
     );
